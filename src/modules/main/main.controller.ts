@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from "@nestjs/common";
+import { Body, Controller, Get, Post } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { ContactPortfolioForm } from "./main.dto";
 
@@ -23,5 +23,10 @@ export class MainController {
             subject: `${data.subject} - ${data.email}`,
         })
         return "Email Sent!"
+    }
+
+    @Get()
+    async index() {
+        return "It is working"
     }
 }
