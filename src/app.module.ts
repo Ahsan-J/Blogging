@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule, TypeOrmModuleAsyncOptions } from "@nestjs/typeorm";
-import { MainModule } from './modules/main/main.module';
+import { PortfolioModule } from './modules/portfolio/portfolio.module';
 import { CommonModule } from './helper-modules/common/common.module';
 
 const databaseConfiguration: TypeOrmModuleAsyncOptions = {
@@ -24,7 +24,7 @@ const databaseConfiguration: TypeOrmModuleAsyncOptions = {
     ConfigModule.forRoot(),
     TypeOrmModule.forRootAsync(databaseConfiguration),
     CommonModule,
-    MainModule,
+    PortfolioModule,
   ],
 })
 export class AppModule {}

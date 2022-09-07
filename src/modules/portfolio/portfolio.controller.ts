@@ -1,24 +1,24 @@
 import { Body, Controller, Get, Post } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
-import { ContactPortfolioForm } from "./main.dto";
+import { ContactPortfolioForm } from "./portfolio.dto";
 
 import { MailService } from '../../helper-modules/mail/mail.service'
-import { MainService } from "./main.service";
+import { PortfolioService } from "./portfolio.service";
 import { ConfigService } from "@nestjs/config";
 
 @ApiTags('Index')
-@Controller()
-export class MainController {
+@Controller('portfolio')
+export class PortfolioController {
     
     constructor(
         private mailService: MailService,
-        private mainService: MainService,
+        private portfolioService: PortfolioService,
         private configService: ConfigService
     ) {}
     
     @Post('contact')
     async submitPortfolioContact(@Body() data:ContactPortfolioForm) {
-        const contactInfo = await this.mainService.saveContactInfo(data);
+        const contactInfo = await this.portfolioService.saveContactInfo(data);
         await this.mailService.sendEmailTemplate({
             from: `"${data.name}"<${this.configService.get("SMTP_USER")}>`,
             subject: `${data.subject} - ${data.email}`,
