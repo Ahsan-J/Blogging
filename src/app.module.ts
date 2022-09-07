@@ -3,6 +3,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule, TypeOrmModuleAsyncOptions } from "@nestjs/typeorm";
 import { PortfolioModule } from './modules/portfolio/portfolio.module';
 import { CommonModule } from './helper-modules/common/common.module';
+import { AppController } from './app.controller';
+import { LoggingModule } from './modules/logging/logging.module';
 
 const databaseConfiguration: TypeOrmModuleAsyncOptions = {
   imports: [ConfigModule],
@@ -25,6 +27,8 @@ const databaseConfiguration: TypeOrmModuleAsyncOptions = {
     TypeOrmModule.forRootAsync(databaseConfiguration),
     CommonModule,
     PortfolioModule,
+    LoggingModule,
   ],
+  controllers: [AppController]
 })
 export class AppModule {}

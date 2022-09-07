@@ -1,10 +1,15 @@
-import { BadRequestException, Injectable, OnModuleDestroy, OnModuleInit } from "@nestjs/common";
+import { BadRequestException, Inject, Injectable, OnModuleDestroy, OnModuleInit } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import nodemailer from 'nodemailer';
+import { LoggingService } from "src/modules/logging/logging.service";
 
 @Injectable()
 export class MailService implements OnModuleInit, OnModuleDestroy {
-    constructor(private configService: ConfigService){}
+    constructor(
+        @Inject(LoggingService)
+        private loggingService: LoggingService,
+        private configService: ConfigService,
+    ){}
     
     transporter: nodemailer.Transporter;
 
@@ -35,6 +40,17 @@ export class MailService implements OnModuleInit, OnModuleDestroy {
         });
 
         if(response.rejected.includes(to)) {
+            this.loggingService.createLog({
+                message: "Email rejected by nodemailer",
+                data: JSON.stringify({
+                    from: options.from, // sender address
+                    to, // list of receivers
+                    subject: options.subject, // Subject line
+                    html: options.markup
+                }),
+                file_path: "mail.service.ts",
+                route: null,
+            })
             throw new BadRequestException("Email cannot be sent to user at the moment")
         }
 

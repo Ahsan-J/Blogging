@@ -31,9 +31,4 @@ export class PortfolioController {
         })
         return "Email Sent!"
     }
-
-    @Get()
-    async index() {
-        return "It is working"
-    }
 }
