@@ -1,4 +1,5 @@
 import { Controller, Get, Inject, Query } from "@nestjs/common";
+import { ApiTags } from "@nestjs/swagger";
 import { PaginationMeta, PaginationQuery } from "src/helper-modules/common/common.dto";
 import { CommonService } from "src/helper-modules/common/common.service";
 import { Sieve } from "src/helper/sieve.pipe";
@@ -6,6 +7,7 @@ import { FindOptionsWhere } from "typeorm";
 import { Log } from "./logging.entity";
 import { LoggingService } from "./logging.service";
 
+@ApiTags('Logs')
 @Controller('logs')
 export class LoggingController {
     constructor(

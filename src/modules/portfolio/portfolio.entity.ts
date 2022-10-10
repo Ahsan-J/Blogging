@@ -1,3 +1,4 @@
+import { nanoid } from "nanoid";
 import { BaseModel } from "src/helper/model";
 import { Column, Entity, PrimaryColumn } from "typeorm";
 
@@ -5,7 +6,7 @@ import { Column, Entity, PrimaryColumn } from "typeorm";
 export class Contacts extends BaseModel {
     
     @PrimaryColumn()
-    id: string;
+    id: string = nanoid();
     
     @Column()
     name: string;

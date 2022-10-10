@@ -1,16 +1,17 @@
+import moment from "moment";
 import { Column } from "typeorm";
 
 export abstract class BaseModel {
     @Column()
-    created_at: string;
+    created_at: string = moment().toISOString();
 
-    @Column()
+    @Column({default: 1})
     status: number;
 
     @Column({nullable: true})
-    updated_at: string;
+    updated_at: string = moment().toISOString();
 
-    @Column({nullable: true})
+    @Column({nullable: true, default: null})
     deleted_at: string;
 }
 

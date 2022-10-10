@@ -22,9 +22,6 @@ export class LoggingService {
             data: log.data,
             file_path: log.file_path,
             route: log.route,
-            created_at: moment().toISOString(),
-            updated_at: moment().toISOString(),
-            deleted_at: null,
         })
     }
 }

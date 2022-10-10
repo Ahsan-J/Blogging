@@ -6,7 +6,7 @@ import { MailService } from '../../helper-modules/mail/mail.service'
 import { PortfolioService } from "./portfolio.service";
 import { ConfigService } from "@nestjs/config";
 
-@ApiTags('Index')
+@ApiTags('Portfolio')
 @Controller('portfolio')
 export class PortfolioController {
     
