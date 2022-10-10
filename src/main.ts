@@ -7,6 +7,7 @@ import { AppModule } from './app.module';
 import { join } from 'path';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import helmet from 'helmet';
+import session from 'express-session';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -22,6 +23,14 @@ async function bootstrap() {
   if (configService.get("NODE_ENV") === 'production') {
     app.use(helmet());
   }
+
+  app.use(
+    session({
+      secret: configService.get("APP_ID"),
+      resave: false,
+      saveUninitialized: false,
+    }),
+  );
 
   // app.use(csurf());
 
@@ -46,7 +55,6 @@ async function bootstrap() {
     .setDescription('Blogging API doc ')
     .setVersion('1.0')
     .addBearerAuth({ type: 'http', scheme: 'bearer' }, 'AccessToken')
-    .addApiKey({ type: 'apiKey', name: 'x-api-key', in: 'header', }, 'ApiKeyAuth')
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);

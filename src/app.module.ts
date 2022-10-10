@@ -5,6 +5,9 @@ import { PortfolioModule } from './modules/portfolio/portfolio.module';
 import { CommonModule } from './helper-modules/common/common.module';
 import { AppController } from './app.controller';
 import { LoggingModule } from './modules/logging/logging.module';
+import { UserModule } from './modules/user/user.module';
+import { BlogModule } from './modules/blog/blog.module';
+import { TokenModule } from './helper-modules/token/token.module';
 
 const databaseConfiguration: TypeOrmModuleAsyncOptions = {
   imports: [ConfigModule],
@@ -28,6 +31,9 @@ const databaseConfiguration: TypeOrmModuleAsyncOptions = {
     CommonModule,
     PortfolioModule,
     LoggingModule,
+    UserModule,
+    TokenModule,
+    BlogModule,
   ],
   controllers: [AppController]
 })
