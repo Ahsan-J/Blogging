@@ -36,3 +36,4 @@ postgres.cmd
 .env.*
 logging.db
 book_dump
+**/*.zip
