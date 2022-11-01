@@ -54,17 +54,17 @@ export class UsersService {
     if(registerBody.confirm_password !== registerBody.password) {
       throw new BadRequestException("User Password mismatch")
     }
-
-    const user = await this.usersRepository.save({
+    
+    const user = await this.usersRepository.create({
       password: this.getPasswordHash(registerBody.password),
       email: registerBody.email,
       name: registerBody.name,
       status: UserStatus.InActive,
       role: registerBody.role || UserRole.Standard,
-      profile_url: `/profile/${profile.filename}`
+      profile: `/profile/${profile.filename}`
     });
     
-    return user;
+    return await this.usersRepository.create(user);
   }
 
   async updateUser(userInfo: User): Promise<User> {

@@ -13,12 +13,15 @@ export class PortfolioService {
     ) {}
     
     async saveContactInfo(data: ContactPortfolioForm): Promise<Contacts> {
-        return await this.contactRepository.save({
+
+        const contactInfo =  await this.contactRepository.create({
             email: data.email,
             message: data.message,
             name: data.name,
             subject: data.subject,
             status: ContactStatus.Unread,
-        })
+        });
+        
+        return await this.contactRepository.save(contactInfo)
     }   
 }

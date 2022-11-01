@@ -29,3 +29,10 @@ export class AppResponse<T = any> {
         this.data = data;
     }
 }
+
+export interface ListOptions {
+    page?: number;
+    pageSize?: number;
+    filters?: string;
+    sorts?: string;
+}

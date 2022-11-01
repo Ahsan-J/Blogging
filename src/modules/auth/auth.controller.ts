@@ -39,7 +39,7 @@ export class AuthController {
     }
 
     const loginPassword: string = this.userService.getPasswordHash(body.password);
-
+    
     if (userInfo.password !== loginPassword) {
       throw new BadRequestException("Password mismatch")
     }

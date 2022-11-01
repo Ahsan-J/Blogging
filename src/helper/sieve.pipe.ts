@@ -30,7 +30,7 @@ export class Sieve implements PipeTransform {
 
     reg = new RegExp(`([\\w\\d|]+)(${Object.keys(this.filterOp).join("|")})([\\w\\d|]*)`);
 
-    transformFilters(filters) {
+    transformFilters(filters: string) {
         
         const processFilterValue = (op, value) => {
             if(value && value.toLowerCase() != "null") { // perform sieve operation
@@ -85,7 +85,7 @@ export class Sieve implements PipeTransform {
             case "filters": 
                 return this.transformFilters(value);
             case "sorts": 
-                return this.transformSorts(value)
+                return this.transformSorts(value);
             default:
                 return {}
         }

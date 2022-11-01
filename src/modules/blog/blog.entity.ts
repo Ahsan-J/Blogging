@@ -26,10 +26,6 @@ export class Blog extends BaseModel {
     @JoinTable()
     likes: User[];
 
-    @ManyToMany(() => User, user => user.unlike_blogs)
-    @JoinTable()
-    unlikes: User[];
-
     @OneToMany(() => Comment, comment => comment.blog)
     @JoinTable()
     comments: Comment[];

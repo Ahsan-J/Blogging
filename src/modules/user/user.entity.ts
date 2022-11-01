@@ -36,9 +36,6 @@ export class User extends BaseModel {
     @ManyToMany(() => Blog,blog => blog.likes)
     like_blogs: Blog[];
 
-    @ManyToMany(() => Blog, blog => blog.unlikes)
-    unlike_blogs: Blog[];
-
     @ManyToMany(() => User, user => user.followers)
     following: User[];
 
