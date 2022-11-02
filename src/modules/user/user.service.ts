@@ -61,7 +61,11 @@ export class UsersService {
       name: registerBody.name,
       status: UserStatus.InActive,
       role: registerBody.role || UserRole.Standard,
-      profile: `/profile/${profile.filename}`
+      profile: `/profile/${profile.filename}`,
+      bio: registerBody.bio,
+      linkedin: registerBody.linkedin,
+      github: registerBody.github,
+      website: registerBody.github
     });
     
     return await this.usersRepository.create(user);

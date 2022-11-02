@@ -1,7 +1,7 @@
 import { Controller, Post, Body, ForbiddenException, BadRequestException, Headers, Get, Query, Inject, Session, Res, UseGuards } from '@nestjs/common';
 import { User } from '../user/user.entity';
 import { UsersService } from '../user/user.service';
-import { ForgotPasswordBody, LoginBody, RegisterBody, ResetPasswordBody, ActivateUserBody } from './auth.dto';
+import { ForgotPasswordBody, LoginBody, RegisterBody, ResetPasswordBody, ActivateUserBody, CheckAvailability } from './auth.dto';
 import { AuthService } from './auth.service';
 import { ApiTags } from '@nestjs/swagger';
 import { MailService } from '../../helper-modules/mail/mail.service';
@@ -137,4 +137,13 @@ export class AuthController {
     res.send(await this.authService.generateResetMarkup(user, code))
   }
 
+  @Post('check-availability')
+  async checkAvailability(@Body() body: CheckAvailability) {
+    try {
+      const user = await this.userService.getUserByEmail(body.email);
+      return !user;
+    } catch(e) {
+      return true;
+    }
+  }
 }

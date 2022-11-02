@@ -30,6 +30,15 @@ export class User extends BaseModel {
     @Column({ default: null, nullable: true})
     linkedin: string;
 
+    @Column({ default: null, nullable: true})
+    github: string;
+
+    @Column({ default: null, nullable: true})
+    bio: string;
+    
+    @Column({ default: null, nullable: true})
+    website: string;
+
     @OneToMany(() => Blog, blog => blog.author)
     blogs: Blog[];
 

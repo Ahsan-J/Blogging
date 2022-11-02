@@ -42,6 +42,19 @@ export class RegisterBody {
     @IsOptional()
     @IsNotEmpty()
     linkedin: string;
+
+    @IsOptional()
+    @IsNotEmpty()
+    github: string;
+
+    @IsOptional()
+    @IsNotEmpty()
+    website: string;
+    
+    @IsOptional()
+    @IsNotEmpty()
+    @MinLength(6)
+    bio: string;
 }
 
 export class ResetPasswordBody {
@@ -78,4 +91,11 @@ export class ActivateUserBody {
     @IsNotEmpty()
     @IsString()
     id: User['id']
+}
+
+export class CheckAvailability {
+    @IsNotEmpty()
+    @IsString()
+    @IsEmail()
+    email: User['email']   
 }
