@@ -1,7 +1,6 @@
 import { BadRequestException, Injectable, UnauthorizedException } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { nanoid } from "nanoid";
-import { CacheService } from "../../helper-modules/cache/cache.service";
 import { User } from "../user/user.entity";
 import moment from 'moment';
 import { join } from 'path';
@@ -12,7 +11,6 @@ export class AuthService {
 
     constructor(
         private configService: ConfigService,
-        private cacheService: CacheService,
     ) { }
 
     // Reset Process ************************************************************
@@ -26,18 +24,12 @@ export class AuthService {
         ];
 
         const text = Buffer.from(`${keyFactors.join('|')}`).toString('base64');
-
-        await this.cacheService.set(`reset_${userInfo.email}`, text);
         return text
     }
 
     async validateResetCode(userInfo: User, code: string): Promise<boolean> {
         if(!code) {
             throw new BadRequestException("Reset Code is missing")
-        }
-
-        if(await this.cacheService.get(`reset_${userInfo.email}`) !== code) {
-            throw new BadRequestException("Invalid Reset Password Code for User")
         }
 
         const [, appId, userId, time] = Buffer.from(code, 'base64').toString('ascii').split("|");
@@ -82,18 +74,12 @@ export class AuthService {
         ];
 
         const text = Buffer.from(`${keyFactors.join('|')}`).toString('base64');
-
-        await this.cacheService.set(`active_${userInfo.id}`, text);
         return text
     }
 
     async validateActivationCode(userInfo: User, code: string): Promise<boolean> {
         if(!code) {
             throw new BadRequestException("Reset Code is missing")
-        }
-        
-        if(await this.cacheService.get(`active_${userInfo.id}`) !== code) {
-            throw new BadRequestException("Invalid Activation Code for User")
         }
 
         const [, appId, userId, time] = Buffer.from(code, 'base64').toString('ascii').split("|")

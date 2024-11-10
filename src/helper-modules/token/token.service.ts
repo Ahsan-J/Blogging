@@ -2,8 +2,6 @@ import { ForbiddenException, Injectable, UnauthorizedException } from "@nestjs/c
 import moment from "moment";
 import { nanoid } from "nanoid";
 import { User } from "src/modules/user/user.entity";
-import { UAParser } from "ua-parser-js";
-import { CacheService } from "../cache/cache.service";
 import { ITokenData } from "./token.type";
 import { Request } from "express";
 import { ConfigService } from "@nestjs/config";
@@ -13,27 +11,20 @@ import { UsersService } from "src/modules/user/user.service";
 export class TokenService {
     constructor(
         private readonly configService: ConfigService,
-        private readonly cacheService: CacheService,
         private readonly userService: UsersService,
     ) { }
-    async generateToken(user: User, headers: Request['headers']) {
-
-        const parser = new UAParser();
-        parser.setUA(headers['user-agent']);
+    async generateToken(user: User) {
 
         const keyFactors = [
             nanoid(), // Token Id
             this.configService.get("APP_ID"),
             user.id,
             user.role,
-            parser.getDevice().type || "",
-            parser.getBrowser().name || "",
             moment().toISOString(),
         ];
 
         const text = Buffer.from(`${keyFactors.join('|')}`).toString('base64');
 
-        await this.cacheService.set(`${user.id}_${parser.getBrowser().name || ""}_${parser.getDevice().type || ""}`, text);
         return text
     }
 
@@ -42,9 +33,6 @@ export class TokenService {
         if (!headers.authorization) {
             throw new UnauthorizedException("Authorization token is missing");
         }
-
-        const parser = new UAParser();
-        parser.setUA(headers['user-agent']);
 
         const {
             appId,
@@ -66,18 +54,6 @@ export class TokenService {
         return true;
     }
 
-    async removeToken(headers: Request['headers']): Promise<any> {
-
-
-        if (!headers.authorization) {
-            throw new UnauthorizedException("Authorization token is missing");
-        }
-
-        const { userId, deviceType, browser } = this.getTokenData(headers);
-
-        return await this.cacheService.del(`${userId}_${browser}_${deviceType}`)
-    }
-
     getTokenData(headers: Request['headers']): ITokenData {
 
         if (!headers.authorization) {
@@ -91,8 +67,6 @@ export class TokenService {
             appId,
             userId,
             userRole,
-            deviceType,
-            browser,
             tokenTime,
         ] = Buffer.from(code, 'base64').toString('ascii').split("|");
 
@@ -101,8 +75,6 @@ export class TokenService {
             appId,
             userId,
             userRole: parseInt(userRole),
-            deviceType,
-            browser,
             tokenTime,
         }
     }

@@ -5,7 +5,5 @@ export interface ITokenData {
     appId: string;
     userId: User['id'],
     userRole: User['role'],
-    deviceType: string,
-    browser: string,
     tokenTime: string,
 }

@@ -1,4 +1,4 @@
-import { Controller, Post, Body, ForbiddenException, BadRequestException, Headers, Get, Query, Inject, Session, Res, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, ForbiddenException, BadRequestException, Headers, Get, Query, Inject, Session, Res, UseGuards, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { User } from '../user/user.entity';
 import { UsersService } from '../user/user.service';
 import { ForgotPasswordBody, LoginBody, RegisterBody, ResetPasswordBody, ActivateUserBody, CheckAvailability } from './auth.dto';
@@ -10,6 +10,8 @@ import { CommonService } from 'src/helper-modules/common/common.service';
 import { Response, Request } from "express";
 import { TokenService } from 'src/helper-modules/token/token.service';
 import { AuthGuard } from './auth.guard';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { getStorage } from 'src/helper/utility';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -49,7 +51,7 @@ export class AuthController {
     // setting value for @AuthUser in auth.decorator.ts
     session.user = userInfo;
 
-    const access_token = await this.tokenService.generateToken(userInfo, headers);
+    const access_token = await this.tokenService.generateToken(userInfo);
 
     return {
       ...userInfo,
@@ -58,25 +60,16 @@ export class AuthController {
     }
   }
 
-  @Post('logout')
-  @UseGuards(AuthGuard)
-  async logoutUser(@Headers() headers: Request['headers'], @Session() session: Record<string, any>): Promise<string> {
-    delete session.user;
-    return await this.tokenService.removeToken(headers);
-  }
-
   @Post('register')
-  async registerUser(@Body() body: RegisterBody, @Headers() headers: Request['headers'], @Session() session: Record<string, any>): Promise<User & { access_token: string, token_expiry: number }> {
+  @UseInterceptors(FileInterceptor('profile', { storage: getStorage('profile') }))
+  async registerUser(@Body() body: RegisterBody, @UploadedFile() profile: Express.Multer.File): Promise<User & { access_token: string, token_expiry: number }> {
 
-    const userInfo = await this.userService.createUser(body);
+    const userInfo = await this.userService.createUser(body, profile);
+    
+    // const markup = await this.authService.generateActivationMarkup(userInfo);
+    // await this.mailService.sendEmailTemplate(userInfo.email, "Activate Your Account", markup);
 
-    const markup = await this.authService.generateActivationMarkup(userInfo)
-
-    // await this.mailService.sendEmailTemplate(userInfo.email, "Activate Your Account", markup)
-
-    const access_token = await this.tokenService.generateToken(userInfo, headers);
-
-    session.user = userInfo;
+    const access_token = await this.tokenService.generateToken(userInfo);
 
     return {
       ...userInfo,

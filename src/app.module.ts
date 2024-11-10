@@ -12,7 +12,7 @@ import { TokenModule } from './helper-modules/token/token.module';
 const databaseConfiguration: TypeOrmModuleAsyncOptions = {
   imports: [ConfigModule],
   useFactory: async (configService: ConfigService) => ({
-    "type": "mysql",
+    "type": "postgres",
     "host": configService.get('DATABASE_HOST'),
     "port": parseInt(configService.get('DATABASE_PORT')),
     "username": configService.get('DATABASE_USER'),

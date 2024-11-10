@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, ForbiddenException, Get, Inject, Param, Post, Put, Query, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, Inject, Param, Post, Put, Query, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import moment from 'moment';
 import { PaginationMeta, PaginationQuery } from 'src/helper-modules/common/common.dto';
@@ -15,7 +15,6 @@ import { getStorage } from 'src/helper/utility';
 import { AuthUser } from '../auth/auth.decorator';
 
 @ApiTags('User')
-@UseGuards(AuthGuard)
 @Controller("user")
 export class UserController {
   constructor(
@@ -25,7 +24,6 @@ export class UserController {
   ) { }
 
   @Get()
-  @UseRoles(UserRole.Admin)
   async getUsers(@Query() query: PaginationQuery, @Query('filters', Sieve) filters, @Query('sorts', Sieve) sorts): Promise<Array<User> | { meta: PaginationMeta }> {
 
     const page = parseInt(query.page || '1');
@@ -44,11 +42,13 @@ export class UserController {
   }
 
   @Get('self')
+  @UseGuards(AuthGuard)
   async getAuthUser(@AuthUser() user: User): Promise<User> {
-    return user;
+    return this.userService.getUser(user.id);
   }
 
   @Put('change-role')
+  @UseGuards(AuthGuard)
   @UseRoles(UserRole.Admin)
   async changeUserRole(@Body() body: ChangeRoleBody): Promise<User> {
     const user = await this.userService.getUserByEmail(body.email);
@@ -58,6 +58,7 @@ export class UserController {
 
   @Post('create')
   @UseRoles(UserRole.Admin)
+  @UseGuards(AuthGuard)
   @UseInterceptors(FileInterceptor('profile', { storage: getStorage('profile') }))
   async createUser(@Body() body: RegisterBody, @UploadedFile() profile: Express.Multer.File): Promise<User> {
     const user = await this.userService.createUser(body, profile);
@@ -65,8 +66,11 @@ export class UserController {
   }
 
   @Put('/:id')
+  @UseGuards(AuthGuard)
   @UseRoles(UserRole.Admin)
   async updateUser(@Body() body: UpdateUser, @Param('id') id: string): Promise<User> {
+    if(!id) throw new BadRequestException(`User "id" is required to edit`)
+    
     const user = await this.userService.getUser(id);
 
     user.name = body.name || user.name;
@@ -78,8 +82,12 @@ export class UserController {
   }
 
   @Delete('/:id')
+  @UseGuards(AuthGuard)
   @UseRoles(UserRole.Admin)
   async deleteUser(@Param('id') id: string, @Query('destroy') destroy: string): Promise<User> {
+    
+    if(!id) throw new BadRequestException(`User "id" is required to delete`)
+
     const user = await this.userService.getUser(id);
     if (destroy) {
       await this.userService.destroy(user)
@@ -91,8 +99,10 @@ export class UserController {
   }
 
   @Put('/:id/restore')
+  @UseGuards(AuthGuard)
   @UseRoles(UserRole.Admin)
   async restoreUser(@Param('id') id: string): Promise<User> {
+    if(!id) throw new BadRequestException(`User "id" is required to restore`)
     const user = await this.userService.getUser(id);
     user.deleted_at = null;
     user.status = UserStatus.InActive;
@@ -100,12 +110,8 @@ export class UserController {
   }
 
   @Get('/:id')
-  async getUser(@Param('id') id: string, @AuthUser() user: User): Promise<User> {
-
-    if (user.id == id || user.role == UserRole.Admin) {
-      return this.userService.getUser(id);
-    }
-
-    throw new ForbiddenException(`Unable to access other user with id ${id}. Your id is ${user.id}`);
+  async getUser(@Param('id') id: string): Promise<User> {
+    if(!id) throw new BadRequestException(`User "id" is required to access information`)
+    return this.userService.getUser(id);
   }
 }

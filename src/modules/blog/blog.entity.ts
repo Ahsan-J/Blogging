@@ -1,6 +1,6 @@
 import { nanoid } from "nanoid";
 import { BaseModel } from "../../helper/model";
-import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryColumn } from "typeorm";
+import { Column, Entity, Index, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryColumn } from "typeorm";
 import { User } from "../user/user.entity";
 import { Comment } from "./comment/comment.entity";
 
@@ -9,9 +9,11 @@ export class Blog extends BaseModel {
     @PrimaryColumn()
     id: string = nanoid();
 
+    @Index({fulltext: true})
     @Column()
     title: string;
 
+    @Index({fulltext: true})
     @Column()
     description: string;
 
