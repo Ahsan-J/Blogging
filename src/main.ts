@@ -13,9 +13,6 @@ async function bootstrap() {
 
   app.enableCors();
   app.useStaticAssets(join(process.cwd(), 'public'));
-  app.useStaticAssets(join(process.cwd(), 'uploads', 'profile'), { prefix: "/profile/" });
-  app.useStaticAssets(join(process.cwd(), 'uploads', 'movie_poster'), { prefix: "/movie_poster/" });
-  app.useStaticAssets(join(process.cwd(), 'uploads', 'subtitles'), { prefix: "/subtitles/" });
   
   const configService = app.get(ConfigService);
   
@@ -39,16 +36,15 @@ async function bootstrap() {
     }),
   }));
 
-  app.useStaticAssets(join(process.cwd(), 'uploads', 'video'), { prefix: "/video/" });
-
   const config = new DocumentBuilder()
     .setTitle('Blogging API')
     .setDescription('Blogging API doc ')
     .setVersion('1.0')
     .addBearerAuth({ type: 'http', scheme: 'bearer' }, 'AccessToken')
     .build();
+  
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('docs', app, document);
   await app.listen(configService.get("PORT") || 3000);
 }
 bootstrap();
