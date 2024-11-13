@@ -1,17 +1,20 @@
 import { Controller, Post, Body, ForbiddenException, BadRequestException, Headers, Get, Query, Inject, Session, Res, UseGuards, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { User } from '../user/user.entity';
 import { UsersService } from '../user/user.service';
-import { ForgotPasswordBody, LoginBody, RegisterBody, ResetPasswordBody, ActivateUserBody, CheckAvailability } from './auth.dto';
+import { LoginRequest, LoginResponse } from './dto/login.dto';
+import { RegisterUserRequest } from './dto/register.dto';
 import { AuthService } from './auth.service';
 import { ApiTags } from '@nestjs/swagger';
-import { MailService } from '../../helper-modules/mail/mail.service';
-import { UserStatus } from '../user/user.enum';
-import { CommonService } from 'src/helper-modules/common/common.service';
+import { MailService } from '@/shared/mail/mail.service';
 import { Response, Request } from "express";
-import { TokenService } from 'src/helper-modules/token/token.service';
-import { AuthGuard } from './auth.guard';
+import { TokenService } from '@/shared/token/token.service';
+import { AuthGuard } from '../../common/guards/auth.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { getStorage } from 'src/helper/utility';
+import { getStorage } from 'src/common/utils/utility';
+import { ResetPasswordBody } from './dto/reset.dto';
+import { ForgotPasswordBody } from './dto/forgot.dto';
+import { ActivateUserBody } from './dto/activation.dto';
+import { CheckAvailability } from './dto/availability.dto';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -21,22 +24,20 @@ export class AuthController {
     private authService: AuthService,
     private userService: UsersService,
     private mailService: MailService,
-    @Inject(CommonService)
-    private commonService: CommonService,
     @Inject(TokenService)
     private tokenService: TokenService,
   ) { }
 
   @Post('login')
-  async loginUser(@Body() body: LoginBody, @Headers() headers: Request['headers'], @Session() session: Record<string, any>): Promise<User & { access_token: string, token_expiry: number }> {
+  async loginUser(@Body() body: LoginRequest, @Headers() headers: Request['headers']): Promise<LoginResponse> {
 
     const userInfo: User = await this.userService.getUserByEmail(body.email);
 
-    if (this.commonService.checkValue(userInfo.status, UserStatus.InActive)) {
+    if (!userInfo.isActive) {
       throw new ForbiddenException("Your account is not active at the moment. Check your email and follow steps to activate")
     }
 
-    if (this.commonService.checkValue(userInfo.status, UserStatus.Blocked)) {
+    if (userInfo.isBlocked) {
       throw new ForbiddenException("Your Account has been temporarily blocked");
     }
 
@@ -47,9 +48,6 @@ export class AuthController {
     }
 
     delete userInfo.password;
-
-    // setting value for @AuthUser in auth.decorator.ts
-    session.user = userInfo;
 
     const access_token = await this.tokenService.generateToken(userInfo);
 
@@ -62,7 +60,7 @@ export class AuthController {
 
   @Post('register')
   @UseInterceptors(FileInterceptor('profile', { storage: getStorage('profile') }))
-  async registerUser(@Body() body: RegisterBody, @UploadedFile() profile: Express.Multer.File): Promise<User & { access_token: string, token_expiry: number }> {
+  async registerUser(@Body() body: RegisterUserRequest, @UploadedFile() profile: Express.Multer.File): Promise<LoginResponse> {
 
     const userInfo = await this.userService.createUser(body, profile);
     
@@ -110,7 +108,7 @@ export class AuthController {
   async activateUser(@Query() query: ActivateUserBody): Promise<User> {
     const user = await this.userService.getUser(query.id);
     await this.authService.validateActivationCode(user, query.code)
-    user.status = this.commonService.setValue(user.status, UserStatus.Active);
+    user.isActive = true
     return user;
   }
 

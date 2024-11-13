@@ -1,8 +1,7 @@
-import moment from "moment";
 import { nanoid } from "nanoid";
 import { DataSource } from "typeorm";
-import { Blog } from "../modules/blog/blog.entity";
-import { Comment } from "../modules/blog/comment/comment.entity";
+import { Blog } from "../../modules/blog/blog.entity";
+import { Comment } from "../../modules/comment/comment.entity";
 
 const blogs: Array<Partial<Blog>> = [
     {
@@ -21,8 +20,8 @@ export function seed(AppDataSource: DataSource) {
     blogs.forEach(async (blog: Blog) => {
         const savedBlog = await blogRepository.save({
             id: nanoid(),
-            created_at: moment().toISOString(),
-            updated_at: moment().toISOString(),
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
             deleted_at: null,
             ...blog
         });

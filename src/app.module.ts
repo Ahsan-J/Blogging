@@ -1,13 +1,12 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule, TypeOrmModuleAsyncOptions } from "@nestjs/typeorm";
-import { PortfolioModule } from './modules/portfolio/portfolio.module';
-import { CommonModule } from './helper-modules/common/common.module';
+import { PortfolioModule } from '@/modules/portfolio/portfolio.module';
 import { AppController } from './app.controller';
-import { LoggingModule } from './modules/logging/logging.module';
-import { UserModule } from './modules/user/user.module';
-import { BlogModule } from './modules/blog/blog.module';
-import { TokenModule } from './helper-modules/token/token.module';
+import { LoggingModule } from '@/modules/logging/logging.module';
+import { UserModule } from '@/modules/user/user.module';
+import { BlogModule } from '@/modules/blog/blog.module';
+import { TokenModule } from '@/shared/token/token.module';
 
 const databaseConfiguration: TypeOrmModuleAsyncOptions = {
   imports: [ConfigModule],
@@ -28,12 +27,11 @@ const databaseConfiguration: TypeOrmModuleAsyncOptions = {
   imports: [
     ConfigModule.forRoot(),
     TypeOrmModule.forRootAsync(databaseConfiguration),
-    CommonModule,
     PortfolioModule,
     LoggingModule,
     UserModule,
-    TokenModule,
     BlogModule,
+    TokenModule,
   ],
   controllers: [AppController]
 })

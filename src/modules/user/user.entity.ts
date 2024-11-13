@@ -1,12 +1,16 @@
-import { BaseModel } from "../../helper/model";
+import { BaseModel } from "@/common/entity/base.entity";
 import { Column, Entity, ManyToMany, OneToMany, PrimaryColumn } from "typeorm";
 import { Exclude } from "class-transformer";
-import { UserRole } from "./user.enum";
+import { UserRole, UserStatus } from "./user.enum";
 import { nanoid } from "nanoid";
 import { Blog } from "../blog/blog.entity";
+import { BitwiseOperator } from "@/common/utils/bitwise.utility";
 
 @Entity()
 export class User extends BaseModel {
+
+    private readonly userRoleBitwiseOperator = new BitwiseOperator(UserRole)
+    private readonly userStatusBitwiseOperator = new BitwiseOperator(UserStatus)
     
     @PrimaryColumn()
     id: string = nanoid();
@@ -21,7 +25,7 @@ export class User extends BaseModel {
     @Exclude({ toPlainOnly: true })
     password: string;
 
-    @Column({default: UserRole.Standard})
+    @Column()
     role: UserRole;
 
     @Column()
@@ -50,4 +54,24 @@ export class User extends BaseModel {
 
     @ManyToMany(() => User, user => user.following)
     followers: User[];
+
+    get isActive(): boolean {
+        return this.userStatusBitwiseOperator.hasValue(this.status, UserStatus.Active)
+    }
+
+    set isActive(value: boolean) {
+        
+    }
+
+    get isBlocked(): boolean { 
+        return this.userStatusBitwiseOperator.hasValue(this.status, UserStatus.Blocked)
+    }
+
+    get isAdmin(): boolean {
+        return this.userRoleBitwiseOperator.hasValue(this.role, UserRole.Admin)
+    }
+
+    set isAdmin(value: boolean) {
+        
+    }
 }

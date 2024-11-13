@@ -2,15 +2,16 @@ import { BadRequestException, Injectable, UnauthorizedException } from "@nestjs/
 import { ConfigService } from "@nestjs/config";
 import { nanoid } from "nanoid";
 import { User } from "../user/user.entity";
-import moment from 'moment';
 import { join } from 'path';
 import { readFileSync } from "fs";
+import { TokenService } from "@/shared/token/token.service";
 
 @Injectable()
 export class AuthService {
 
     constructor(
         private configService: ConfigService,
+        private tokenService: TokenService
     ) { }
 
     // Reset Process ************************************************************
@@ -20,7 +21,7 @@ export class AuthService {
             nanoid(), // Token Id
             this.configService.get("APP_ID"),
             userInfo.email,
-            moment().toISOString(),
+            new Date().toISOString(),
         ];
 
         const text = Buffer.from(`${keyFactors.join('|')}`).toString('base64');
@@ -42,9 +43,9 @@ export class AuthService {
             throw new BadRequestException("Invalid Reset for matching User")
         }
 
-        if(!moment(time).isBetween(moment().subtract(1, 'day'), moment())) {
-            throw new UnauthorizedException("Reset token expired its duration")
-        }
+        // if(!moment(time).isBetween(moment().subtract(1, 'day'), moment())) {
+        //     throw new UnauthorizedException("Reset token expired its duration")
+        // }
 
         return true;
     }
@@ -70,7 +71,7 @@ export class AuthService {
             nanoid(), // Token Id
             this.configService.get("APP_ID"),
             userInfo.id,
-            moment().toISOString(),
+            new Date().toISOString(),
         ];
 
         const text = Buffer.from(`${keyFactors.join('|')}`).toString('base64');
@@ -92,9 +93,9 @@ export class AuthService {
             throw new BadRequestException("Invalid Activation for matching User")
         }
 
-        if(!moment(time).isBetween(moment().subtract(1, 'day'), moment())) {
-            throw new BadRequestException("Activation token expired its duration")
-        }
+        // if(!moment(time).isBetween(moment().subtract(1, 'day'), moment())) {
+        //     throw new BadRequestException("Activation token expired its duration")
+        // }
 
         return true;
     }

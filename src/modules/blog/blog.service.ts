@@ -2,11 +2,10 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { Blog } from "./blog.entity";
-import { CreateBlog } from './blog.dto';
+import { CreateBlog } from './dto/create_blog.dto';
 import { User } from "../user/user.entity";
 import { BlogStatus } from "./blog.enum";
-import moment from "moment";
-import { ListOptions } from "src/helper/model";
+import { ListOptions } from "./interfaces/list_option.interface";
 
 @Injectable()
 export class BlogService {
@@ -78,7 +77,7 @@ export class BlogService {
     }
 
     async deleteBlog(blog: Blog): Promise<Blog> {
-        blog.deleted_at = moment().toISOString();
+        blog.deleted_at = new Date().toISOString();
         return this.blogRepository.save(blog);
     }
 

@@ -1,6 +1,5 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import moment from "moment";
 import { FindManyOptions, Repository } from "typeorm";
 import { Log } from "./logging.entity";
 import { ICreateLog } from "./logging.type";

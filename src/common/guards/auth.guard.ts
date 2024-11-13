@@ -1,9 +1,9 @@
 import { Injectable, CanActivate, ExecutionContext, Inject, SetMetadata } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Request } from 'express';
-import { CommonService } from 'src/helper-modules/common/common.service';
-import { TokenService } from 'src/helper-modules/token/token.service';
-import { UserRole } from '../user/user.enum';
+import { TokenService } from '@/shared/token/token.service';
+import { UserRole } from '../../modules/user/user.enum';
+import { BitwiseOperator } from '../utils/bitwise.utility';
 
 export const UseRoles = (...roles: UserRole[]) => SetMetadata('roles', roles);
 
@@ -12,10 +12,10 @@ export class AuthGuard implements CanActivate {
     constructor(
         @Inject(TokenService) 
         private tokenService: TokenService, 
-        @Inject(CommonService)
-        private commonService: CommonService,
         private reflector: Reflector
     ) { }
+
+    private readonly bitwiseOperator = new BitwiseOperator(UserRole);
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
         const requiredRoles = this.reflector.getAllAndOverride<UserRole[]>('roles', [context.getHandler(), context.getClass()]) || [];
@@ -28,12 +28,7 @@ export class AuthGuard implements CanActivate {
         }
         if(await this.tokenService.validateAccessToken(headerData)) {
             const { /* userId, */ userRole } = this.tokenService.getTokenData(headerData);
-            if(requiredRoles.length && !requiredRoles.some(role => this.commonService.checkValue(userRole, role))) return false;
-
-            // assigning user to session when undefined
-            if(!request.session.user) {
-                request.session.user = await this.tokenService.getTokenUser(headerData)
-            }
+            if(requiredRoles.length && !requiredRoles.some(role => this.bitwiseOperator.hasValue(userRole, role))) return false;
 
             // case where session user doesn't match token user. 
             // @Todo: Force log out user before checking it.

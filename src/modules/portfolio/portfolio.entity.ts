@@ -1,5 +1,5 @@
 import { nanoid } from "nanoid";
-import { BaseModel } from "src/helper/model";
+import { BaseModel } from "@/common/entity/base.entity";
 import { Column, Entity, PrimaryColumn } from "typeorm";
 
 @Entity()

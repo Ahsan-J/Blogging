@@ -1,8 +1,8 @@
 import { nanoid } from "nanoid";
-import { BaseModel } from "../../../helper/model";
-import { User } from "../../../modules/user/user.entity";
+import { BaseModel } from "@/common/entity/base.entity";
+import { User } from "../user/user.entity";
 import { Column, Entity, ManyToOne, OneToMany, OneToOne, PrimaryColumn } from "typeorm";
-import { Blog } from "../blog.entity";
+import { Blog } from "../blog/blog.entity";
 
 @Entity()
 export class Comment extends BaseModel{

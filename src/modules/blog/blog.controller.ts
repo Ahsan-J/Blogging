@@ -1,15 +1,14 @@
-import { Body, Controller, Delete, ForbiddenException, Get, Inject, Param, Post, Query, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
+import { Body, Controller, Delete, ForbiddenException, Get, Param, Post, Query, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { ApiBearerAuth, ApiConsumes, ApiTags } from "@nestjs/swagger";
-import { PaginationMeta, PaginationQuery } from "src/helper-modules/common/common.dto";
-import { CommonService } from "src/helper-modules/common/common.service";
-import { Sieve } from "src/helper/sieve.pipe";
-import { getStorage } from "src/helper/utility";
+import { PaginationMeta, PaginationQuery } from "@/common/dto/pagination.dto";
+import { Sieve } from "src/common/pipes/sieve.pipe";
+import { getStorage } from "src/common/utils/utility";
 import { AuthUser } from "../auth/auth.decorator";
-import { AuthGuard } from "../auth/auth.guard";
+import { AuthGuard } from "../../common/guards/auth.guard";
 import { User } from "../user/user.entity";
 import { UserRole } from "../user/user.enum";
-import { CreateBlog } from "./blog.dto";
+import { CreateBlog } from "./dto/create_blog.dto";
 import { Blog } from "./blog.entity";
 import { BlogService } from "./blog.service";
 
@@ -19,8 +18,6 @@ export class BlogController {
 
     constructor(
         private blogService: BlogService,
-        @Inject(CommonService)
-        private commonService: CommonService,
     ) { }
 
     @Get()
@@ -35,7 +32,7 @@ export class BlogController {
             sorts 
         });
 
-        const meta = this.commonService.generateMeta(count, page, pageSize);
+        const meta = new PaginationMeta(count, page, pageSize);
 
         return {
             ...data,
@@ -63,7 +60,7 @@ export class BlogController {
     async deleteBlog(@Param("id") id: string, @AuthUser() user: User) {
         const blog = await this.blogService.getBlogById(id);
 
-        if (blog.author.id !== user.id && !this.commonService.checkValue(user.role, UserRole.Admin)) {
+        if (blog.author.id !== user.id && !user.isAdmin) {
             throw new ForbiddenException("Unable to perform delete on other's blog");
         }
 
@@ -99,7 +96,7 @@ export class BlogController {
             sorts 
         });
 
-        const meta = this.commonService.generateMeta(count, page, pageSize);
+        const meta = new PaginationMeta(count, page, pageSize);
 
         return {
             ...data,

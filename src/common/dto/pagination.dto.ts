@@ -25,14 +25,26 @@ export class PaginationMeta {
     @IsNumber({allowNaN: false})
     last_page: number;
     
-    // first_page_url: string;
-    // last_page_url: string;
-    // next_page_url: string;
-    // prev_page_url: string;
-    
     @IsNumber({allowNaN: false})
     from: number;
     
     @IsNumber({allowNaN: false})
     to: number;
+
+    constructor(count: number, current_page: number, page_size: number) {
+        if(page_size < 1) {
+            throw new Error("Page size must be greater than 1")
+        }
+
+        if(current_page < 1) {
+            throw new Error("Current Page must be greater than or equals to 1")
+        }
+
+        this.from = (current_page - 1) * page_size
+        this.to = current_page * page_size
+        this.total =  count
+        this.current_page = current_page
+        this.last_page = Math.ceil(count / page_size),
+        this.page_size = page_size
+    }
 }

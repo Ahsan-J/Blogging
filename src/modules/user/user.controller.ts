@@ -1,25 +1,21 @@
-import { BadRequestException, Body, Controller, Delete, Get, Inject, Param, Post, Put, Query, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, Param, Post, Put, Query, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import moment from 'moment';
-import { PaginationMeta, PaginationQuery } from 'src/helper-modules/common/common.dto';
-import { CommonService } from 'src/helper-modules/common/common.service';
-import { AuthGuard, UseRoles } from '../auth/auth.guard';
-import { Sieve } from 'src/helper/sieve.pipe';
-import { RegisterBody } from '../auth/auth.dto';
+import { PaginationMeta, PaginationQuery } from '@/common/dto/pagination.dto';
+import { AuthGuard, UseRoles } from '../../common/guards/auth.guard';
+import { Sieve } from 'src/common/pipes/sieve.pipe';
+import { RegisterUserRequest } from '@/modules/auth/dto/register.dto';
 import { ChangeRoleBody, UpdateUser } from './user.dto';
 import { User } from './user.entity';
 import { UserRole, UserStatus } from './user.enum';
 import { UsersService } from './user.service';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { getStorage } from 'src/helper/utility';
+import { getStorage } from 'src/common/utils/utility';
 import { AuthUser } from '../auth/auth.decorator';
 
 @ApiTags('User')
 @Controller("user")
 export class UserController {
   constructor(
-    @Inject(CommonService)
-    private commonService: CommonService,
     private userService: UsersService,
   ) { }
 
@@ -52,7 +48,7 @@ export class UserController {
   @UseRoles(UserRole.Admin)
   async changeUserRole(@Body() body: ChangeRoleBody): Promise<User> {
     const user = await this.userService.getUserByEmail(body.email);
-    user.role = this.commonService.setValue(user.role, body.role);
+    user.isAdmin = true;
     return await this.userService.updateUser(user);
   }
 
@@ -60,7 +56,7 @@ export class UserController {
   @UseRoles(UserRole.Admin)
   @UseGuards(AuthGuard)
   @UseInterceptors(FileInterceptor('profile', { storage: getStorage('profile') }))
-  async createUser(@Body() body: RegisterBody, @UploadedFile() profile: Express.Multer.File): Promise<User> {
+  async createUser(@Body() body: RegisterUserRequest, @UploadedFile() profile: Express.Multer.File): Promise<User> {
     const user = await this.userService.createUser(body, profile);
     return user;
   }
@@ -93,7 +89,7 @@ export class UserController {
       await this.userService.destroy(user)
       return user;
     }
-    user.deleted_at = moment().toISOString();
+    user.deleted_at = new Date().toISOString();
     user.status = UserStatus.Blocked;
     return await this.userService.updateUser(user);
   }
@@ -105,7 +101,7 @@ export class UserController {
     if(!id) throw new BadRequestException(`User "id" is required to restore`)
     const user = await this.userService.getUser(id);
     user.deleted_at = null;
-    user.status = UserStatus.InActive;
+    user.isActive = true
     return await this.userService.updateUser(user);
   }
 

@@ -1,18 +1,17 @@
 import { ForbiddenException, Injectable, UnauthorizedException } from "@nestjs/common";
-import moment from "moment";
 import { nanoid } from "nanoid";
 import { User } from "src/modules/user/user.entity";
 import { ITokenData } from "./token.type";
 import { Request } from "express";
 import { ConfigService } from "@nestjs/config";
-import { UsersService } from "src/modules/user/user.service";
+import { isAfter, parseISO, subDays } from "date-fns";
 
 @Injectable()
 export class TokenService {
     constructor(
         private readonly configService: ConfigService,
-        private readonly userService: UsersService,
     ) { }
+
     async generateToken(user: User) {
 
         const keyFactors = [
@@ -20,7 +19,7 @@ export class TokenService {
             this.configService.get("APP_ID"),
             user.id,
             user.role,
-            moment().toISOString(),
+            new Date().toISOString(),
         ];
 
         const text = Buffer.from(`${keyFactors.join('|')}`).toString('base64');
@@ -39,15 +38,14 @@ export class TokenService {
             tokenTime,
         } = this.getTokenData(headers);
 
-        // if (await this.cacheService.get(`${userId}_${browser}_${deviceType}`) !== code) {
-        //     throw new UnauthorizedException("Invalid Authorization token")
-        // }
-
         if (appId !== this.configService.get("APP_ID")) {
             throw new ForbiddenException("App id is invalid")
         }
 
-        if (!moment(tokenTime).isBetween(moment().subtract(1, 'day'), moment())) {
+        const date = parseISO(tokenTime)
+        const expDate = subDays(new Date(), 1);
+        
+        if (isAfter(date, expDate)) {
             throw new UnauthorizedException("Reset token expired its duration")
         }
 
@@ -77,11 +75,5 @@ export class TokenService {
             userRole: parseInt(userRole),
             tokenTime,
         }
-    }
-
-    async getTokenUser(headers: Request['headers']): Promise<User> {
-        const { userId } = this.getTokenData(headers);
-
-        return await this.userService.getUser(userId);
     }
 }

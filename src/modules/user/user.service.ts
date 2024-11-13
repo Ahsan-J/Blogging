@@ -2,21 +2,18 @@ import { BadRequestException, ConflictException, Inject, Injectable, NotAcceptab
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { createHmac } from 'crypto';
-import { DeleteResult, FindManyOptions, Repository } from 'typeorm';
-import { RegisterBody } from '../auth/auth.dto';
+import { DeleteResult, FindManyOptions } from 'typeorm';
+import { RegisterUserRequest } from '@/modules/auth/dto/register.dto';
 import { User } from './user.entity';
-import { UserRole, UserStatus } from './user.enum';
-import { CommonService } from 'src/helper-modules/common/common.service';
-import { PaginationMeta } from 'src/helper-modules/common/common.dto';
+import { PaginationMeta } from '@/common/dto/pagination.dto';
+import { UserRepository } from './user.repository';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
-    private usersRepository: Repository<User>,
+    private usersRepository: UserRepository,
     private configService: ConfigService,
-    @Inject(CommonService)
-    private commonService: CommonService
   ) { }
 
   async getUser(id: User['id']): Promise<User> {
@@ -33,7 +30,7 @@ export class UsersService {
     return user;
   }
 
-  async createUser(registerBody: RegisterBody, profile?: Express.Multer.File ): Promise<User> {
+  async createUser(registerBody: RegisterUserRequest, profile?: Express.Multer.File ): Promise<User> {
     
     if (registerBody.password !== registerBody.confirm_password) {
       throw new NotAcceptableException("Password mismatch")
@@ -59,8 +56,6 @@ export class UsersService {
       password: this.getPasswordHash(registerBody.password),
       email: registerBody.email,
       name: registerBody.name,
-      status: UserStatus.InActive,
-      role: registerBody.role || UserRole.Standard,
       profile: `/profile/${profile.filename}`,
       bio: registerBody.bio,
       linkedin: registerBody.linkedin,
@@ -100,7 +95,7 @@ export class UsersService {
   async getUsers(options: FindManyOptions<User>): Promise<[User[], PaginationMeta]> {
     const [result, count] = await this.usersRepository.findAndCount(options);
     
-    const meta = this.commonService.generateMeta(count, options.skip, options.take);
+    const meta = new PaginationMeta(count, options.skip, options.take);
     
     return [result, meta]
   }

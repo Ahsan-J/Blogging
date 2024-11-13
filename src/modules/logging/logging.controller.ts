@@ -1,8 +1,7 @@
 import { Controller, Get, Inject, Query } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
-import { PaginationMeta, PaginationQuery } from "src/helper-modules/common/common.dto";
-import { CommonService } from "src/helper-modules/common/common.service";
-import { Sieve } from "src/helper/sieve.pipe";
+import { PaginationMeta, PaginationQuery } from "@/common/dto/pagination.dto";
+import { Sieve } from "src/common/pipes/sieve.pipe";
 import { FindOptionsWhere } from "typeorm";
 import { Log } from "./logging.entity";
 import { LoggingService } from "./logging.service";
@@ -11,8 +10,6 @@ import { LoggingService } from "./logging.service";
 @Controller('logs')
 export class LoggingController {
     constructor(
-        @Inject(CommonService)
-        private commonService: CommonService,
         private loggingService: LoggingService,
     ) { }
 
@@ -28,7 +25,7 @@ export class LoggingController {
             order: sorts,
         })
 
-        const meta = this.commonService.generateMeta(count, page, pageSize);
+        const meta = new PaginationMeta(count, page, pageSize);
 
         return {
             ...data,

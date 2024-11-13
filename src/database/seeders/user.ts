@@ -1,8 +1,7 @@
-import moment from "moment";
 import { nanoid } from "nanoid";
 import { DataSource } from "typeorm";
-import { User } from "../modules/user/user.entity";
-import { UserRole, UserStatus } from "../modules/user/user.enum";
+import { User } from "../../modules/user/user.entity";
+import { UserRole, UserStatus } from "../../modules/user/user.enum";
 
 const users: Array<Partial<User>> = [
     {
@@ -24,8 +23,8 @@ export function seed(AppDataSource: DataSource) {
     users.forEach(async (user: User) => {
         const savedUser = await userRepository.save({
             id: nanoid(),
-            created_at: moment().toISOString(),
-            updated_at: moment().toISOString(),
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
             deleted_at: null,
             ...user
         });
