@@ -2,7 +2,8 @@ import { NestFactory, Reflector } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { BadRequestException, ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { TransformInterceptor } from './common/interceptors/response.interceptor';
+import { AppResponseInterceptor } from '@/common/interceptors/response.interceptor';
+import { ObjectType } from '@/common/types/collection.type';
 import { AppModule } from './app.module';
 import { join } from 'path';
 import { NestExpressApplication } from '@nestjs/platform-express';
@@ -20,16 +21,16 @@ async function bootstrap() {
     app.use(helmet());
   }
 
-  // app.use(csurf());
-
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
-  app.useGlobalInterceptors(new TransformInterceptor());
+  app.useGlobalInterceptors(new AppResponseInterceptor());
 
   app.useGlobalPipes(new ValidationPipe({
     exceptionFactory: (errors) => new BadRequestException({
       error: "Field validation failed",
-      validation: errors.reduce((result, error) => {
-        result[error.property] = Object.values(error.constraints).pop();
+      validation: errors.reduce<ObjectType>((result, error) => {
+        if(error.constraints) {
+          result[error.property] = Object.values<string>(error.constraints).pop();
+        }
         return result
       }, {}),
       statusCode: 400,
@@ -45,6 +46,6 @@ async function bootstrap() {
   
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document);
-  await app.listen(configService.get("PORT") || 3000);
+  await app.listen(configService.get("PORT", 3000));
 }
 bootstrap();

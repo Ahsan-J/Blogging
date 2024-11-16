@@ -1,3 +1,3 @@
 export enum ContactStatus {
-    Unread = 1,
+    READ,
 }

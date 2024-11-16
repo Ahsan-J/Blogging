@@ -1,15 +1,33 @@
-import { Column } from "typeorm";
+import { nanoid } from "nanoid";
+import { BeforeInsert, BeforeUpdate, Column, PrimaryGeneratedColumn } from "typeorm";
 
 export abstract class BaseModel {
-    @Column()
-    created_at: string = new Date().toISOString();
+
+    @PrimaryGeneratedColumn('uuid')
+    public id: string;
+
+    @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+    public createdAt: Date;
 
     @Column({default: 1})
-    status: number;
+    protected status: number;
 
-    @Column({nullable: true})
-    updated_at: string = new Date().toISOString();
+    @Column({ type: 'timestamp', nullable: true })
+    public updatedAt: Date | null;
 
-    @Column({nullable: true, default: null})
-    deleted_at: string;
+    @Column({ type: 'timestamp', nullable: true })
+    public deletedAt: Date | null; 
+
+    @BeforeInsert()
+    setCreatedAt() {
+        this.createdAt = new Date();
+        if (!this.id) {
+            this.id = nanoid(); // If the `id` is not set, generate a UUID
+        }
+    }
+
+    @BeforeUpdate()
+    setUpdatedAt() {
+        this.updatedAt = new Date();
+    }
 }

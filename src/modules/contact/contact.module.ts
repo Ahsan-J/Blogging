@@ -2,9 +2,9 @@ import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { MailModule } from "@/shared/mail/mail.module";
-import { PortfolioController } from "./portfolio.controller";
-import { Contacts } from "./portfolio.entity";
-import { PortfolioService } from "./portfolio.service";
+import { ContactController } from "./contact.controller";
+import { Contacts } from "./contact.entity";
+import { ContactService } from "./contact.service";
 
 @Module({
     imports:[
@@ -12,8 +12,8 @@ import { PortfolioService } from "./portfolio.service";
         ConfigModule,
         TypeOrmModule.forFeature([Contacts]),
     ],
-    controllers: [PortfolioController],
-    exports: [PortfolioService],
-    providers: [PortfolioService]
+    controllers: [ContactController],
+    exports: [ContactService],
+    providers: [ContactService]
 })
-export class PortfolioModule {}
+export class ContactModule {}

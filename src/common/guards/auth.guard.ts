@@ -2,8 +2,8 @@ import { Injectable, CanActivate, ExecutionContext, Inject, SetMetadata } from '
 import { Reflector } from '@nestjs/core';
 import { Request } from 'express';
 import { TokenService } from '@/shared/token/token.service';
-import { UserRole } from '../../modules/user/user.enum';
-import { BitwiseOperator } from '../utils/bitwise.utility';
+import { UserRole } from '@/modules/user/user.enum';
+import { BitwiseOperator } from '@/common/utils/bitwise.utility';
 
 export const UseRoles = (...roles: UserRole[]) => SetMetadata('roles', roles);
 
@@ -18,6 +18,7 @@ export class AuthGuard implements CanActivate {
     private readonly bitwiseOperator = new BitwiseOperator(UserRole);
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
+
         const requiredRoles = this.reflector.getAllAndOverride<UserRole[]>('roles', [context.getHandler(), context.getClass()]) || [];
         const request = context.switchToHttp().getRequest();
         
@@ -26,13 +27,10 @@ export class AuthGuard implements CanActivate {
             'x-api-key': (request.headers['x-api-key'] || request.query['key']) as string,
             'authorization': (request.headers['authorization'] || request.query['token']) as string,
         }
-        if(await this.tokenService.validateAccessToken(headerData)) {
-            const { /* userId, */ userRole } = this.tokenService.getTokenData(headerData);
-            if(requiredRoles.length && !requiredRoles.some(role => this.bitwiseOperator.hasValue(userRole, role))) return false;
 
-            // case where session user doesn't match token user. 
-            // @Todo: Force log out user before checking it.
-            // if(request.session.user?.id != userId) return false;
+        if(headerData.authorization) {
+            const [, userRole] = this.tokenService.getTokenData(headerData.authorization);
+            if(requiredRoles.length && !requiredRoles.some(role => this.bitwiseOperator.hasValue(parseInt(userRole, 10), role))) return false;
             
             return true; 
         }

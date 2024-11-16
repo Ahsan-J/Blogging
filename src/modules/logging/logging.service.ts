@@ -1,8 +1,10 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { FindManyOptions, Repository } from "typeorm";
+import { Repository } from "typeorm";
 import { Log } from "./logging.entity";
 import { ICreateLog } from "./logging.type";
+import { PaginateData, PaginatedFindParams, PaginationMeta } from "@/common/dto/pagination.dto";
+import { LogResponse } from "./logging.dto";
 
 @Injectable()
 export class LoggingService {
@@ -11,16 +13,25 @@ export class LoggingService {
         private logRepository: Repository<Log>,
         ) {}
 
-    async getLogs(options: FindManyOptions<Log>): Promise<[Log[], number]> {
-        return await this.logRepository.findAndCount(options);
+    async getLogs(options: PaginatedFindParams<Log>): Promise<PaginateData<LogResponse>> {
+        
+        const [result, count] = await this.logRepository.findAndCount(options.toFindOption());
+
+        const meta = new PaginationMeta(count, options.page, options.pageSize);
+        const logResponseList = result.map(l => new LogResponse(l))
+        
+        return new PaginateData(logResponseList, meta)
     }
 
-    async createLog(log: ICreateLog): Promise<Log> {
-        return await this.logRepository.save({
-            message: log.message,
-            data: log.data,
-            file_path: log.file_path,
-            route: log.route,
+    async createLog(createLogParam: ICreateLog): Promise<LogResponse> {
+        
+        const log = await this.logRepository.save({
+            message: createLogParam.message,
+            data: createLogParam.data,
+            file_path: createLogParam.file_path,
+            route: createLogParam.route,
         })
+
+        return new LogResponse(log)
     }
 }

@@ -9,4 +9,3 @@ export class AppController {
         return "It is working"
     }
 }
-

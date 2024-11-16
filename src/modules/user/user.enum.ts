@@ -1,8 +1,8 @@
 export enum UserStatus {
-    Active,
-    Blocked,
+    ACTIVE,
+    BLOCKED,
 }
 
 export enum UserRole {
-    Admin,
+    ADMIN,
 }

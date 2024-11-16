@@ -1,120 +1,131 @@
-import { BadRequestException, Injectable, UnauthorizedException } from "@nestjs/common";
+import { BadRequestException, ConflictException, ForbiddenException, Injectable, NotAcceptableException } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { nanoid } from "nanoid";
-import { User } from "../user/user.entity";
-import { join } from 'path';
-import { readFileSync } from "fs";
+import { User } from "@/modules/user/user.entity";
 import { TokenService } from "@/shared/token/token.service";
+import { LoginResponse } from "./dto/login.dto";
+import { UserRepository } from "@/modules/user/user.repository";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Crypto } from "@/common/utils/encryption.utility";
+import { RegisterUserRequest } from "./dto/register.dto";
+import { ResetPasswordRequest } from './dto/reset.dto';
+import { MailService } from "@/shared/mail/mail.service";
+import { UserResponse } from "@/modules/user/dto/user-response.dto";
 
 @Injectable()
 export class AuthService {
 
     constructor(
         private configService: ConfigService,
-        private tokenService: TokenService
+        private tokenService: TokenService,
+        private mailService: MailService,
+        @InjectRepository(User)
+        private userRepository: UserRepository,
     ) { }
 
-    // Reset Process ************************************************************
+    get cryptoHelper(): Crypto { return new Crypto(this.configService.get("APP_ID") || "") }
 
-    async generateResetCode(userInfo: User): Promise<string> {
-        const keyFactors = [
-            nanoid(), // Token Id
-            this.configService.get("APP_ID"),
-            userInfo.email,
-            new Date().toISOString(),
-        ];
+    private resetKeyword = "RESET_PASSWORD"
+    private activationKeyword = "ACTIVATION_KEYWORD"
 
-        const text = Buffer.from(`${keyFactors.join('|')}`).toString('base64');
-        return text
+    async authenticateUser(email: string, password: string): Promise<LoginResponse> {
+        const userInfo: User = await this.userRepository.findUserByEmail(email);
+
+        if (!userInfo.isActive) {
+            throw new ForbiddenException("Your account is not active at the moment. Check your email and follow steps to activate")
+        }
+      
+        if (userInfo.isBlocked) {
+            throw new ForbiddenException("Your Account has been temporarily blocked");
+        }
+    
+        const loginPassword: string = this.cryptoHelper.getTextHash(password);
+        
+        if (userInfo.password !== loginPassword) {
+            throw new BadRequestException("Password mismatch")
+        }
+      
+        const access_token = await this.tokenService.generateToken([ userInfo.id, userInfo.role ]);
+    
+        return new LoginResponse(userInfo, access_token);
     }
 
-    async validateResetCode(userInfo: User, code: string): Promise<boolean> {
-        if(!code) {
-            throw new BadRequestException("Reset Code is missing")
+    async registerUser(registerUser: RegisterUserRequest, profile: Express.Multer.File): Promise<UserResponse> {
+        
+        if(registerUser.confirm_password !== registerUser.password) {
+            throw new NotAcceptableException("Password mismatch")
         }
 
-        const [, appId, userId, time] = Buffer.from(code, 'base64').toString('ascii').split("|");
+        const savedUser: User = await this.userRepository.findUserByEmail(registerUser.email);
+    
+        if(savedUser) {
+          throw new ConflictException("User Already registered with email")
+        }
+        
+        const user = await this.userRepository.create({
+          password: this.cryptoHelper.getTextHash(registerUser.password),
+          email: registerUser.email,
+          name: registerUser.name,
+          profile: `/profile/${profile?.filename}`,
+          bio: registerUser.bio,
+          linkedin: registerUser.linkedin,
+          github: registerUser.github,
+          website: registerUser.github
+        });
 
-        if(appId !== this.configService.get("APP_ID")) {
-            throw new BadRequestException("Invalid Reset code for App")
+        user.isActive = false
+
+        const newUser = await this.userRepository.save(user);
+
+        const activationCode = await this.tokenService.generateToken([ this.activationKeyword, newUser.id, newUser.role ]);
+
+        this.mailService.sendActivationCode(newUser.email, activationCode)
+    
+        return new UserResponse(newUser);
+    }
+
+    async validateActivationCode(code: string): Promise<LoginResponse> {
+        const [activationKeyword, userId] = this.tokenService.getTokenData(code);
+
+        if(activationKeyword != this.activationKeyword) {
+            throw new BadRequestException("Invalid Activation code")
         }
 
-        if(userId !== userInfo.id) {
+        const user = await this.userRepository.findUserById(userId);
+        
+        user.isActive = true
+        user.isBlocked = false;
+
+        const savedUser = await this.userRepository.save(user)
+    
+        const access_token = await this.tokenService.generateToken([ savedUser.id, savedUser.role ]);
+    
+        return new LoginResponse(savedUser, access_token);
+    }
+
+    async resetPassword(resetPassword: ResetPasswordRequest): Promise<string> {
+
+        const [keyword, userId] = this.tokenService.getTokenData(resetPassword.code);
+
+        const user = await this.userRepository.findUserByEmail(resetPassword.email);
+
+        if(keyword != this.resetKeyword || userId !== user.id) {
             throw new BadRequestException("Invalid Reset for matching User")
         }
-
-        // if(!moment(time).isBetween(moment().subtract(1, 'day'), moment())) {
-        //     throw new UnauthorizedException("Reset token expired its duration")
-        // }
-
-        return true;
-    }
-
-    async generateResetMarkup(user: User, code?: string): Promise<string> {
-        code = code || await this.generateResetCode(user);
-        const filePath = join(process.cwd(), 'template', "reset-password.hbs");
-        const markup = readFileSync(filePath, { encoding: "utf-8" })
-
-        // Handlebars.registerHelper("link_code", (t) => {
-        //     const url = Handlebars.escapeExpression(`http://localhost:3000/auth/reset-password?code=${code}&email=${user.email}`)
-        //     const text = Handlebars.escapeExpression(t)
-        //     return new Handlebars.SafeString("<a href='" + url + "'>" + text + "</a>");
-        // });
-
-        // const template = Handlebars.compile(markup);
-        return ""
-    }
-
-    // Activation Process *********************************************************
-    async generateActivationCode(userInfo: User): Promise<string> {
-        const keyFactors = [
-            nanoid(), // Token Id
-            this.configService.get("APP_ID"),
-            userInfo.id,
-            new Date().toISOString(),
-        ];
-
-        const text = Buffer.from(`${keyFactors.join('|')}`).toString('base64');
-        return text
-    }
-
-    async validateActivationCode(userInfo: User, code: string): Promise<boolean> {
-        if(!code) {
-            throw new BadRequestException("Reset Code is missing")
+    
+        if (resetPassword.confirm_password !== resetPassword.password) {
+          throw new BadRequestException("User Password mismatch")
         }
-
-        const [, appId, userId, time] = Buffer.from(code, 'base64').toString('ascii').split("|")
-        
-        if(appId !== this.configService.get("APP_ID")) {
-            throw new BadRequestException("Invalid Activation code for App")
-        }
-
-        if(userId !== userInfo.id) {
-            throw new BadRequestException("Invalid Activation for matching User")
-        }
-
-        // if(!moment(time).isBetween(moment().subtract(1, 'day'), moment())) {
-        //     throw new BadRequestException("Activation token expired its duration")
-        // }
-
-        return true;
+    
+        return "Password Reset Successful. Try logging with new Password";
     }
 
-    async generateActivationMarkup(user: User, code?: string): Promise<string> {
+    async forgotPassword(email: string): Promise<string> {
+        const user = await this.userRepository.findUserByEmail(email);
 
-        code = code || await this.generateActivationCode(user)
+        const resetCode = await this.tokenService.generateToken([ this.resetKeyword, user.id, user.role ]);
 
-        const filePath = join(process.cwd(), 'template', "activation.hbs");
-        const markup = readFileSync(filePath, { encoding: "utf-8" })
+        this.mailService.sendResetCode(user.email, resetCode)
 
-        // Handlebars.registerHelper("link_code", (t) => {
-        //     const url = Handlebars.escapeExpression(`http://localhost:3000/auth/activate?code=${code}&id=${user.id}`)
-        //     const text = Handlebars.escapeExpression(t)
-        //     return new Handlebars.SafeString("<a href='" + url + "'>" + text + "</a>");
-        // });
-
-        // const template = Handlebars.compile(markup);
-        // return template({ user })
-        return "";
+        return "The code has been sent to your email address. Kindly verify the code for further processing";
     }
 }

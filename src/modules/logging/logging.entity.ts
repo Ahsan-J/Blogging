@@ -1,11 +1,8 @@
 import { BaseModel } from "@/common/entity/base.entity";
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity } from "typeorm";
 
 @Entity()
 export class Log extends BaseModel {
-    @PrimaryGeneratedColumn()
-    id: number;
-
     @Column()
     message: string;
 

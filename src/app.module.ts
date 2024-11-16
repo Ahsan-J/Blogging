@@ -1,33 +1,20 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { TypeOrmModule, TypeOrmModuleAsyncOptions } from "@nestjs/typeorm";
-import { PortfolioModule } from '@/modules/portfolio/portfolio.module';
+import { ConfigModule } from '@nestjs/config';
+import { ContactModule } from '@/modules/contact/contact.module';
 import { AppController } from './app.controller';
 import { LoggingModule } from '@/modules/logging/logging.module';
 import { UserModule } from '@/modules/user/user.module';
 import { BlogModule } from '@/modules/blog/blog.module';
 import { TokenModule } from '@/shared/token/token.module';
+import { DatabaseConfiguration } from './database/database.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
-const databaseConfiguration: TypeOrmModuleAsyncOptions = {
-  imports: [ConfigModule],
-  useFactory: async (configService: ConfigService) => ({
-    "type": "postgres",
-    "host": configService.get('DATABASE_HOST'),
-    "port": parseInt(configService.get('DATABASE_PORT')),
-    "username": configService.get('DATABASE_USER'),
-    "password": configService.get('DATABASE_PASS'),
-    "database": configService.get('DATABASE_NAME'),
-    "synchronize": true,
-    "autoLoadEntities": true,
-  }),
-  inject: [ConfigService]
-}
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    TypeOrmModule.forRootAsync(databaseConfiguration),
-    PortfolioModule,
+    TypeOrmModule.forRootAsync(DatabaseConfiguration),
+    ContactModule,
     LoggingModule,
     UserModule,
     BlogModule,

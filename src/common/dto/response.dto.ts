@@ -1,14 +1,28 @@
-export class AppResponse<T = any> {
-    
-    status: number;
-    data: T;
-    message: string;
-    code: string;
+import { ObjectType } from "../types/collection.type";
+import { PaginationMeta } from "./pagination.dto";
 
-    constructor(data: T, code = "", status = 200, message = "Success") {
-        this.status = status;
-        this.message = message;
-        this.code = code;
-        this.data = data;
+export class AppResponse<T extends (ObjectType | Array<ObjectType>)> {
+    
+    constructor(
+        public data: T, 
+        public readonly code = "", 
+        public readonly status = 200, 
+        public readonly message = "Success",
+    ) {
+
+        if(data && typeof data == "object" && '0' in data) 
+            data = Object.values(data) as T; // converting object to array
+  
     }
+}
+
+export class PaginatedAppResponse<T extends (ObjectType | Array<ObjectType>)> extends AppResponse<T> {
+    
+    constructor(
+        response: AppResponse<T>, 
+        public readonly meta: PaginationMeta | undefined = undefined
+    ) {
+        super(response.data,response.code, response.status, response.message);
+    }
+
 }

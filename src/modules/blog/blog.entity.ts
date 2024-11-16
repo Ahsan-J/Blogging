@@ -1,13 +1,14 @@
-import { nanoid } from "nanoid";
 import { BaseModel } from "@/common/entity/base.entity";
-import { Column, Entity, Index, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryColumn } from "typeorm";
-import { User } from "../user/user.entity";
-import { Comment } from "../comment/comment.entity";
+import { Column, Entity, Index, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany } from "typeorm";
+import { User } from "@/modules/user/user.entity";
+import { Comment } from "@/modules/comment/comment.entity";
+import { BlogStatus } from "./blog.enum";
+import { BitwiseOperator } from "@/common/utils/bitwise.utility";
 
 @Entity()
 export class Blog extends BaseModel {
-    @PrimaryColumn()
-    id: string = nanoid();
+
+    private readonly bitwiseOperator = new BitwiseOperator(BlogStatus)
 
     @Index({fulltext: true})
     @Column()
@@ -31,4 +32,40 @@ export class Blog extends BaseModel {
     @OneToMany(() => Comment, comment => comment.blog)
     @JoinTable()
     comments: Comment[];
+
+    get isActive(): boolean {
+        return this.bitwiseOperator.hasValue(this.status, BlogStatus.ACTIVE)
+    }
+
+    set isActive(value: boolean) {
+        if(value) {
+            this.status = this.bitwiseOperator.setValue(this.status, BlogStatus.ACTIVE)
+        } else {
+            this.status = this.bitwiseOperator.removeValue(this.status, BlogStatus.ACTIVE)
+        }
+    }
+
+    get isPublished(): boolean {
+        return this.bitwiseOperator.hasValue(this.status, BlogStatus.PUBLISH)
+    }
+
+    set isPublished(value: boolean) {
+        if(value) {
+            this.status = this.bitwiseOperator.setValue(this.status, BlogStatus.PUBLISH)
+        } else {
+            this.status = this.bitwiseOperator.removeValue(this.status, BlogStatus.PUBLISH)
+        }
+    }
+
+    get isBlocked(): boolean {
+        return this.bitwiseOperator.hasValue(this.status, BlogStatus.BLOCKED)
+    }
+
+    set isBlocked(value: boolean) {
+        if(value) {
+            this.status = this.bitwiseOperator.setValue(this.status, BlogStatus.BLOCKED)
+        } else {
+            this.status = this.bitwiseOperator.removeValue(this.status, BlogStatus.BLOCKED)
+        }
+    }
 }

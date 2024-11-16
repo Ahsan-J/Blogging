@@ -4,9 +4,7 @@ import { TokenService } from "./token.service";
 
 @Global()
 @Module({
-    imports: [
-        ConfigModule,
-    ],
+    imports: [ConfigModule],
     providers: [TokenService],
     exports: [TokenService],
 })

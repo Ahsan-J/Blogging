@@ -1,7 +1,8 @@
 import { nanoid } from "nanoid";
 import { DataSource } from "typeorm";
-import { Blog } from "../../modules/blog/blog.entity";
-import { Comment } from "../../modules/comment/comment.entity";
+import { Blog } from "@/modules/blog/blog.entity";
+import { Comment } from "@/modules/comment/comment.entity";
+import { Logger } from "@nestjs/common";
 
 const blogs: Array<Partial<Blog>> = [
     {
@@ -14,17 +15,17 @@ const blogs: Array<Partial<Blog>> = [
 export const entities = [Blog, Comment]
 
 export function seed(AppDataSource: DataSource) {
-    
+    const logger = new Logger()
     const blogRepository = AppDataSource.getRepository(Blog);
 
     blogs.forEach(async (blog: Blog) => {
         const savedBlog = await blogRepository.save({
+            ...blog,
             id: nanoid(),
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-            deleted_at: null,
-            ...blog
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            deletedAt: null
         });
-        console.log(`Creating new blog: ${savedBlog.id}`);
+        logger.log(`Creating new blog: ${savedBlog.id}`);
     })
 }
