@@ -7,7 +7,7 @@ import { Blog } from "@/modules/blog/blog.entity";
 export class Comment extends BaseModel{
 
     @OneToOne(() => User)
-    commentor: User;
+    commenter: User;
 
     @Column()
     comment: string;

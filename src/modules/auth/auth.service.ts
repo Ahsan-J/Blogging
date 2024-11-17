@@ -4,7 +4,6 @@ import { User } from "@/modules/user/user.entity";
 import { TokenService } from "@/shared/token/token.service";
 import { LoginResponse } from "./dto/login.dto";
 import { UserRepository } from "@/modules/user/user.repository";
-import { InjectRepository } from "@nestjs/typeorm";
 import { Crypto } from "@/common/utils/encryption.utility";
 import { RegisterUserRequest } from "./dto/register.dto";
 import { ResetPasswordRequest } from './dto/reset.dto';
@@ -18,7 +17,6 @@ export class AuthService {
         private configService: ConfigService,
         private tokenService: TokenService,
         private mailService: MailService,
-        @InjectRepository(User)
         private userRepository: UserRepository,
     ) { }
 
@@ -119,12 +117,15 @@ export class AuthService {
         return "Password Reset Successful. Try logging with new Password";
     }
 
-    async forgotPassword(email: string): Promise<string> {
+    async generateResetPasswordToken(email: string): Promise<string> {
         const user = await this.userRepository.findUserByEmail(email);
+        return this.tokenService.generateToken([ this.resetKeyword, user.id, user.role ]);
+    }
 
-        const resetCode = await this.tokenService.generateToken([ this.resetKeyword, user.id, user.role ]);
+    async forgotPassword(email: string): Promise<string> {
+        const resetCode = await this.generateResetPasswordToken(email)
 
-        this.mailService.sendResetCode(user.email, resetCode)
+        this.mailService.sendResetCode(email, resetCode)
 
         return "The code has been sent to your email address. Kindly verify the code for further processing";
     }

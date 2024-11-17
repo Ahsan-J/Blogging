@@ -1,8 +1,17 @@
 import { Repository } from "typeorm";
 import { Blog } from "./blog.entity";
-import { BadRequestException } from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
 
+@Injectable()
 export class BlogRepository extends Repository<Blog> {
+    constructor(
+        @InjectRepository(Blog)
+        repository: Repository<Blog>,
+    ){
+        super(repository.target, repository.manager, repository.queryRunner);
+    }
+
     async findBlogById(id: string): Promise<Blog> {
         if (!id) {
             throw new BadRequestException(`"id" is needed to fetch define. got ${id}`)

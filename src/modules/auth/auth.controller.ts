@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, Query, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Controller, Post, Body, Get, Query, UseInterceptors, UploadedFile, Render } from '@nestjs/common';
 import { LoginRequest, LoginResponse } from './dto/login.dto';
 import { RegisterUserRequest } from './dto/register.dto';
 import { AuthService } from './auth.service';
@@ -30,6 +30,15 @@ export class AuthController {
     @UploadedFile() profile: Express.Multer.File
   ): Promise<UserResponse> {
     return this.authService.registerUser(body, profile);
+  }
+
+  @Get('reset-password')
+  @Render('reset-password')
+  async resetPasswordTemplate(
+    @Query('email') email: string,
+  ) {
+    const code = await this.authService.generateResetPasswordToken(email)
+    return { code }
   }
 
   @Post('reset-password')

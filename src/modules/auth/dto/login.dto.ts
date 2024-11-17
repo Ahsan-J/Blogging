@@ -16,7 +16,6 @@ export class LoginRequest {
 }
 
 export class LoginResponse extends UserResponse {
-    public token_expiry: 86400
 
     constructor(
         user: User,

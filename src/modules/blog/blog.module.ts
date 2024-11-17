@@ -4,6 +4,7 @@ import { BlogController } from "./blog.controller";
 import { Blog } from "./blog.entity";
 import { BlogService } from "./blog.service";
 import { CommentModule } from "@/modules/comment/comment.module";
+import { BlogRepository } from "./blog.repository";
 
 @Module({
     controllers: [BlogController],
@@ -12,6 +13,6 @@ import { CommentModule } from "@/modules/comment/comment.module";
         CommentModule,
     ],
     exports: [BlogService],
-    providers: [BlogService],
+    providers: [BlogService, BlogRepository],
 })
 export class BlogModule{}

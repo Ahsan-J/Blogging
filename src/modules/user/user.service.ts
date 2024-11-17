@@ -1,5 +1,4 @@
 import { ConflictException, Injectable } from '@nestjs/common';
-// import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserRequest } from './dto/create-user.dto';
 import { User } from './user.entity';
 import { PaginateData, PaginatedFindParams, PaginationMeta } from '@/common/dto/pagination.dto';
@@ -10,7 +9,6 @@ import { UpdateUser } from './dto/update-user.dto';
 @Injectable()
 export class UsersService {
   constructor(
-    // @InjectRepository(User)
     private userRepository: UserRepository
   ) { }
 
