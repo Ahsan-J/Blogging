@@ -47,7 +47,6 @@ export class UsersService {
   
     user.name = userInfo.name || user.name;
     user.linkedin = userInfo.linkedin || user.linkedin;
-    user.role = userInfo.role || user.role;
   
     const updatedUser = await this.userRepository.save(userInfo)
 

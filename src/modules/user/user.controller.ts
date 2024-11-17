@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Query, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { PaginateData, PaginatedFindParams, PaginationQuery } from '@/common/dto/pagination.dto';
 import { AuthGuard, UseRoles } from '@/common/guards/auth.guard';
 import { SieveFilter } from '@/common/pipes/sieve-filter.pipe';
@@ -18,6 +18,8 @@ import { CreateUserRequest } from './dto/create-user.dto';
 
 @ApiTags('User')
 @Controller("user")
+@UseGuards(AuthGuard)
+@ApiBearerAuth('AccessToken')
 export class UserController {
   constructor(
     private userService: UsersService,
@@ -35,35 +37,30 @@ export class UserController {
   }
 
   @Get('self')
-  @UseGuards(AuthGuard)
   async getAuthUser(@AuthUser() user: User): Promise<UserResponse> {
     return this.userService.getUserById(user.id);
   }
 
   @Post('create')
   @UseRoles(UserRole.ADMIN)
-  @UseGuards(AuthGuard)
   @UseInterceptors(FileInterceptor('profile', { storage: getStorage('profile') }))
   async createUser(@Body() body: CreateUserRequest, @UploadedFile() profile: Express.Multer.File): Promise<UserResponse> {
     return this.userService.createUser(body, profile);
   }
 
   @Put('/:id')
-  @UseGuards(AuthGuard)
   @UseRoles(UserRole.ADMIN)
   async updateUser(@Body() body: UpdateUser, @Param('id') id: string): Promise<UserResponse> {
     return this.userService.updateUser(id, body)
   }
 
   @Delete('/:id')
-  @UseGuards(AuthGuard)
   @UseRoles(UserRole.ADMIN)
   async deleteUser(@Param('id') id: string): Promise<UserResponse> {
     return this.userService.deleteUser(id)
   }
 
   @Put('/:id/restore')
-  @UseGuards(AuthGuard)
   @UseRoles(UserRole.ADMIN)
   async restoreUser(@Param('id') id: string): Promise<UserResponse> {
     return this.userService.restoreUser(id)

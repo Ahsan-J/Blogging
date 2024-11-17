@@ -1,5 +1,6 @@
+import { Module } from "@nestjs/common"
 import { ConfigModule, ConfigService } from "@nestjs/config"
-import { TypeOrmModuleAsyncOptions } from "@nestjs/typeorm"
+import { TypeOrmModule, TypeOrmModuleAsyncOptions } from "@nestjs/typeorm"
 
 export const DatabaseConfiguration: TypeOrmModuleAsyncOptions = {
     imports: [ConfigModule],
@@ -15,3 +16,11 @@ export const DatabaseConfiguration: TypeOrmModuleAsyncOptions = {
     }),
     inject: [ConfigService]
 }
+
+@Module({
+    imports: [
+        ConfigModule,
+        TypeOrmModule.forRootAsync(DatabaseConfiguration)
+    ]
+})
+export class DatabaseModule {}

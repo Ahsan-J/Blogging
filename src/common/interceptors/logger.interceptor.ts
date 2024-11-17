@@ -6,7 +6,7 @@ import {
     Logger,
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { catchError, tap } from 'rxjs/operators';
 
 @Injectable()
 export class LoggerInterceptor implements NestInterceptor {
@@ -24,18 +24,30 @@ export class LoggerInterceptor implements NestInterceptor {
                 const duration = Date.now() - now;
                 const { statusCode } = response;
 
-                const logMessage = `Response: [${method}] ${url} - ${statusCode} - ${duration}ms`
+                this.logRequestMessage(method, url, duration, statusCode)
+            }),
+            catchError((error) => {
+                const duration = Date.now() - now;
+                const { method, url } = request;
 
-                if (statusCode >= 200 && statusCode < 300) {
-                    this.logger.log(logMessage);
-                } else if (statusCode >= 300 && statusCode < 400) {
-                    this.logger.warn(logMessage)
-                } else if(statusCode >= 400 && statusCode < 500) {
-                    this.logger.error(logMessage)
-                } else {
-                    this.logger.fatal(logMessage)
-                }
+                this.logRequestMessage(method, url, duration, error.response.statusCode)
+                
+                throw error;
             }),
         );
+    }
+
+    private logRequestMessage(method: string, url: string, duration: number, statusCode: number) {
+        const logMessage = `Response: [${method}] ${url} - ${statusCode} - ${duration}ms`
+
+        if (statusCode >= 200 && statusCode < 300) {
+            this.logger.log(logMessage);
+        } else if (statusCode >= 300 && statusCode < 400) {
+            this.logger.warn(logMessage)
+        } else if(statusCode >= 400 && statusCode < 500) {
+            this.logger.error(logMessage)
+        } else {
+            this.logger.fatal(logMessage)
+        }
     }
 }

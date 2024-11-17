@@ -27,6 +27,16 @@ export class UserRepository extends Repository<User> {
     return user;
   }
 
+  async findRandomUser(): Promise<User | null> {
+    const count = await this.count(); // Get the total count of rows
+    const randomId = Math.floor(Math.random() * count); // Get a random index
+
+    return await this.createQueryBuilder('user')
+      .skip(randomId)  // Skip a random number of records
+      .take(1)         // Take only one record
+      .getOne();
+  }
+
   async findUserByEmail(email: User['email']): Promise<User> {
     if (!email) {
       throw new BadRequestException(`User's "email" is not definded`)
@@ -42,5 +52,5 @@ export class UserRepository extends Repository<User> {
 
     return user;
   }
-  
+
 };
