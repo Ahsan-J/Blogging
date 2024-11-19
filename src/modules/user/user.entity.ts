@@ -6,8 +6,8 @@ import { Blog } from "@/modules/blog/blog.entity";
 import { BitwiseOperator } from "@/common/utils/bitwise.utility";
 
 
-const userRoleBitwiseOperator = new BitwiseOperator(UserRole)
-const userStatusBitwiseOperator = new BitwiseOperator(UserStatus)
+const userRoleBitwiseOperator = new BitwiseOperator<UserRole>()
+const userStatusBitwiseOperator = new BitwiseOperator<UserStatus>()
 
 @Entity()
 export class User extends BaseModel {

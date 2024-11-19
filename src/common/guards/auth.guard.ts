@@ -16,7 +16,7 @@ export class AuthGuard implements CanActivate {
         private reflector: Reflector
     ) { }
 
-    private readonly bitwiseOperator = new BitwiseOperator(UserRole);
+    private readonly bitwiseOperator = new BitwiseOperator<UserRole>();
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
 

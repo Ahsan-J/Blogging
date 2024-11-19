@@ -5,7 +5,7 @@ import { ContactStatus } from "./contact.enum";
 
 @Entity()
 export class Contacts extends BaseModel {
-    private readonly contactBitwiseOperator = new BitwiseOperator(ContactStatus)
+    private readonly contactBitwiseOperator = new BitwiseOperator<ContactStatus>()
     
     @Column()
     name: string;

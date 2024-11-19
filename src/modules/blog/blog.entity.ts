@@ -8,7 +8,7 @@ import { BitwiseOperator } from "@/common/utils/bitwise.utility";
 @Entity()
 export class Blog extends BaseModel {
 
-    private readonly bitwiseOperator = new BitwiseOperator(BlogStatus)
+    private readonly bitwiseOperator = new BitwiseOperator<BlogStatus>();
 
     @Index({fulltext: true})
     @Column()

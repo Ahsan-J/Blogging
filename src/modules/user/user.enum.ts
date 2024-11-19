@@ -1,8 +1,8 @@
-export enum UserStatus {
+export const enum UserStatus {
     ACTIVE,
     BLOCKED,
 }
 
-export enum UserRole {
+export const enum UserRole {
     ADMIN,
 }

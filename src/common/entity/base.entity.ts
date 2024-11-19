@@ -10,7 +10,7 @@ export abstract class BaseModel {
     public createdAt: Date;
 
     @Column({default: 1})
-    protected status: number;
+    protected status: number = 1;
 
     @Column({ type: 'timestamp', nullable: true })
     public updatedAt: Date | null;
