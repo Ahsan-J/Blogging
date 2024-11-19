@@ -6,41 +6,21 @@ import { UserRole } from './user.enum';
 import { CreateUserRequest } from './dto/create-user.dto';
 import { UpdateUser } from './dto/update-user.dto';
 import { UserResponse } from './dto/user-response.dto';
-import { PaginatedFindParams } from '@/common/dto/pagination.dto';
+import { PaginateData, PaginatedFindParams, PaginationMeta } from '@/common/dto/pagination.dto';
 import { ObjectType } from '@/common/types/collection.type';
 import { FilterOperators } from 'typeorm';
-import { TokenService } from '@/shared/token/token.service';
-import { Reflector } from '@nestjs/core';
-import { UserRepository } from './user.repository';
+import { AuthGuard } from '@/common/guards/auth.guard';
 
 describe('UserController', () => {
   let controller: UserController;
   let service: UsersService;
 
   const mockUser = new User();
-
-  mockUser.id = '1';
-  mockUser.email = 'test@example.com';
-  mockUser.name = 'John';
-  mockUser.role = 0;
-  mockUser.password = ""; 
-  mockUser.profile = "profile info"; 
-  mockUser.linkedin = "https://linkedin/in/ahsan-j"; 
-  mockUser.github = "https://github.com/Ahsan-J";
-  mockUser.createdAt = new Date();
-  mockUser.updatedAt = new Date();
-  mockUser.bio = "biography"; 
-  mockUser.website = "https://ahsan-j.github.io/"; 
-  mockUser.blogs = []; 
-  mockUser.like_blogs = [];
-  mockUser.following = []; 
-  mockUser.followers = []; 
-  mockUser.isActive = true; 
-  mockUser.isBlocked = false;
-  mockUser.isAdmin = false; 
-  
-
   const mockUserResponse = new UserResponse(mockUser);
+
+  const mockAuthGuard = {
+    canActivate: jest.fn().mockResolvedValue(true),
+  };
 
   const mockUsersService = {
     getUsers: jest.fn(),
@@ -51,20 +31,6 @@ describe('UserController', () => {
     restoreUser: jest.fn(),
   };
 
-  const mockTokenService = {
-    generateToken: jest.fn(),
-    validateAccessToken: jest.fn(),
-    getTokenData: jest.fn(),
-  };
-
-  const mockUserRepository = {
-    findUserById: jest.fn(),
-    findRandomUser: jest.fn(),
-    findUserByEmail: jest.fn(),
-    create: jest.fn(),
-    save: jest.fn(),
-  };
-
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [UserController],
@@ -72,24 +38,11 @@ describe('UserController', () => {
         {
           provide: UsersService,
           useValue: mockUsersService,
-        },
-        {
-          provide: TokenService,
-          useValue: mockTokenService,
-        },
-        {
-          provide: UserRepository,
-          useValue: mockUserRepository,
-        },
-        {
-          provide: Reflector,
-          useValue: {
-            get: jest.fn(),
-            getAllAndOverride: jest.fn(),
-          },
-        },
+        }
       ],
-    }).compile();
+    })
+    .overrideGuard(AuthGuard).useValue(mockAuthGuard)
+    .compile();
 
     controller = module.get<UserController>(UserController);
     service = module.get<UsersService>(UsersService);
@@ -105,14 +58,11 @@ describe('UserController', () => {
       const pageSize = '10';
       const filters: Array<ObjectType<FilterOperators<string>>> = [];
       const sorts: ObjectType = {};
-      const expectedResponse = {
-        data: [mockUserResponse],
-        total: 1,
-        page: 1,
-        pageSize: 10,
-      };
 
-      mockUsersService.getUsers.mockResolvedValue(expectedResponse);
+      const meta = new PaginationMeta(1);
+      const expectedResponse = new PaginateData([mockUserResponse], meta)
+
+      jest.spyOn(service, 'getUsers').mockResolvedValue(expectedResponse);
 
       const result = await controller.getUsers(page, pageSize, filters, sorts);
 
@@ -148,7 +98,7 @@ describe('UserController', () => {
         filename: 'test.jpg',
       } as Express.Multer.File;
 
-      mockUsersService.createUser.mockResolvedValue(mockUserResponse);
+      jest.spyOn(service,'createUser').mockResolvedValue(mockUserResponse);
 
       const result = await controller.createUser(createUserDto, mockFile);
 
@@ -167,7 +117,7 @@ describe('UserController', () => {
         status: 1
       };
 
-      mockUsersService.updateUser.mockResolvedValue(mockUserResponse);
+      jest.spyOn(service,'updateUser').mockResolvedValue(mockUserResponse);
 
       const result = await controller.updateUser(updateUserDto, userId);
 
@@ -180,7 +130,7 @@ describe('UserController', () => {
     it('should delete a user', async () => {
       const userId = '1';
 
-      mockUsersService.deleteUser.mockResolvedValue(mockUserResponse);
+      jest.spyOn(service, 'deleteUser').mockResolvedValue(mockUserResponse);
 
       const result = await controller.deleteUser(userId);
 
@@ -193,7 +143,7 @@ describe('UserController', () => {
     it('should restore a deleted user', async () => {
       const userId = '1';
 
-      mockUsersService.restoreUser.mockResolvedValue(mockUserResponse);
+      jest.spyOn(service, 'restoreUser').mockResolvedValue(mockUserResponse);
 
       const result = await controller.restoreUser(userId);
 
@@ -206,7 +156,7 @@ describe('UserController', () => {
     it('should return a user by ID', async () => {
       const userId = '1';
 
-      mockUsersService.getUserById.mockResolvedValue(mockUserResponse);
+      jest.spyOn(service, 'getUserById').mockResolvedValue(mockUserResponse);
 
       const result = await controller.getUser(userId);
 

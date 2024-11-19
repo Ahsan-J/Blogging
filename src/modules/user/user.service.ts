@@ -19,7 +19,7 @@ export class UsersService {
 
   async createUser(registerBody: CreateUserRequest, profile?: Express.Multer.File ): Promise<UserResponse> {
 
-    const savedUser: User = await this.userRepository.findUserByEmail(registerBody.email);
+    const savedUser: User | null = await this.userRepository.findUserByEmailOrNull(registerBody.email);
     
     if(savedUser) {
       throw new ConflictException("User Already registered with email")
