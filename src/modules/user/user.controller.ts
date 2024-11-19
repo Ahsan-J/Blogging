@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Query, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { PaginateData, PaginatedFindParams, PaginationQuery } from '@/common/dto/pagination.dto';
+import { PaginateData, PaginatedFindParams } from '@/common/dto/pagination.dto';
 import { AuthGuard, UseRoles } from '@/common/guards/auth.guard';
 import { SieveFilter } from '@/common/pipes/sieve-filter.pipe';
 import { User } from './user.entity';
@@ -27,18 +27,19 @@ export class UserController {
 
   @Get()
   async getUsers(
-    @Query() query?: PaginationQuery, 
+    @Query('page') page: string,
+    @Query('pageSize') pageSize: string,
     @Query('filters', SieveFilter) filters?: Array<ObjectType<FilterOperators<string>>>, 
     @Query('sorts', SieveSort) sorts?: FindOptionsOrder<User>,
   ): Promise<PaginateData<UserResponse>> {
     
-    const findParams = new PaginatedFindParams(query, filters, sorts)
+    const findParams = new PaginatedFindParams(parseInt(page,10), parseInt(pageSize,10), filters, sorts)
     return this.userService.getUsers(findParams);
   }
 
   @Get('self')
   async getAuthUser(@AuthUser() user: User): Promise<UserResponse> {
-    return this.userService.getUserById(user.id);
+    return new UserResponse(user);
   }
 
   @Post('create')

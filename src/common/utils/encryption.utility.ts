@@ -4,7 +4,7 @@ export class Crypto {
 
     constructor(private readonly salt: string) { }
 
-    encryptText = (value: string): string => {
+    public encryptText = (value: string): string => {
         const iv = Buffer.alloc(16, 0);
         const key = scryptSync(this.salt, 'salt', 24) as Buffer;
         const cipher = createCipheriv('aes-192-cbc', key, iv);
@@ -12,7 +12,7 @@ export class Crypto {
         return encryptedText.toString('hex')
     }
 
-    decryptText = (value: string,): string => {
+    public decryptText = (value: string,): string => {
         const iv = Buffer.alloc(16, 0);
         const key = scryptSync(this.salt, 'salt', 24) as Buffer;
         const decipher = createDecipheriv('aes-192-cbc', key, iv);
@@ -20,7 +20,7 @@ export class Crypto {
         return decryptedText;
     }
 
-    getTextHash = (text: string = ""): string => {
+    public getTextHash = (text: string = ""): string => {
         return createHmac('sha256', this.salt)
             .update(text)
             .digest('hex');

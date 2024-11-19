@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Post, Query, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { ApiBearerAuth, ApiConsumes, ApiTags } from "@nestjs/swagger";
-import { PaginateData, PaginatedFindParams, PaginationQuery } from "@/common/dto/pagination.dto";
+import { PaginateData, PaginatedFindParams } from "@/common/dto/pagination.dto";
 import { SieveFilter } from "@/common/pipes/sieve-filter.pipe";
 import { getStorage } from "@/common/utils/storage.utility";
 import { AuthUser } from "@/common/decorator/auth.decorator";
@@ -25,11 +25,12 @@ export class BlogController {
 
     @Get()
     async getBlogs(
-        @Query() query: PaginationQuery, 
+        @Query('page') page: string,
+        @Query('pageSize') pageSize: string, 
         @Query('filters', SieveFilter) filters: Array<ObjectType<FilterOperators<string>>>, 
         @Query('sorts', SieveSort) sorts: FindOptionsOrder<Blog>
     ): Promise<PaginateData<BlogResponse>> {
-        const findParams = new PaginatedFindParams(query, filters, sorts)
+        const findParams = new PaginatedFindParams(parseInt(page,10), parseInt(pageSize,10), filters, sorts)
         return this.blogService.getBlogs(findParams);
     }
 
@@ -75,10 +76,11 @@ export class BlogController {
     @Get(":id/likes")
     async getPostLikes(
         @Param("id") id: string, 
-        @Query() query: PaginationQuery, 
+        @Query('page') page: string,
+        @Query('pageSize') pageSize: string,
         @Query('sorts', SieveSort) sorts: FindOptionsOrder<Blog>,
     ) {
-        const findParams = new PaginatedFindParams(query, [], sorts)
+        const findParams = new PaginatedFindParams(parseInt(page,10), parseInt(pageSize,10), [], sorts)
         const blog = await this.blogService.getBlogById(id);
         return this.blogService.getBlogLikes(blog.id, findParams);
     }

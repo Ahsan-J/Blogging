@@ -23,6 +23,7 @@
     "declarationMap": true,
     "strictNullChecks": true,
     "noImplicitAny": true,
+    "rootDir": "./src",
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,

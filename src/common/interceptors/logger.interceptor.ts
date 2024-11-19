@@ -31,7 +31,7 @@ export class LoggerInterceptor implements NestInterceptor {
                 const { method, url } = request;
 
                 this.logRequestMessage(method, url, duration, error.response.statusCode)
-                
+
                 throw error;
             }),
         );
@@ -44,7 +44,7 @@ export class LoggerInterceptor implements NestInterceptor {
             this.logger.log(logMessage);
         } else if (statusCode >= 300 && statusCode < 400) {
             this.logger.warn(logMessage)
-        } else if(statusCode >= 400 && statusCode < 500) {
+        } else if (statusCode >= 400 && statusCode < 500) {
             this.logger.error(logMessage)
         } else {
             this.logger.fatal(logMessage)

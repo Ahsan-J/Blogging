@@ -19,7 +19,7 @@ export abstract class BaseModel {
     public deletedAt: Date | null; 
 
     @BeforeInsert()
-    setCreatedAt() {
+    private setCreatedAt() {
         this.createdAt = new Date();
         if (!this.id) {
             this.id = nanoid(); // If the `id` is not set, generate a UUID
@@ -27,7 +27,7 @@ export abstract class BaseModel {
     }
 
     @BeforeUpdate()
-    setUpdatedAt() {
+    private setUpdatedAt() {
         this.updatedAt = new Date();
     }
 }

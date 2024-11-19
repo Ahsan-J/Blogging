@@ -1,17 +1,6 @@
-import { IsNumber, IsNumberString, IsOptional } from "class-validator";
+import { IsNumber } from "class-validator";
 import { FindManyOptions, FindOptionsOrder, FindOptionsWhere, ObjectLiteral, SelectQueryBuilder } from "typeorm";
 import { applyFiltersToQueryBuilder } from "../utils/sieve.utility";
-
-export class PaginationQuery {
-    
-    @IsNumberString()
-    @IsOptional()
-    page = '1';
-
-    @IsNumberString()
-    @IsOptional()
-    pageSize: string = '10';
-}
 
 export class PaginationMeta {
     
@@ -52,17 +41,13 @@ export class PaginationMeta {
 }
 
 export class PaginatedFindParams<T extends ObjectLiteral> {
-    public page = 1;
-    public pageSize = 10;
 
     constructor(
-        paginatedQuery?: PaginationQuery,
+        public page = 1,
+        public pageSize = 10,
         private filters?: Array<FindOptionsWhere<T>>,
         private sorts?: FindOptionsOrder<T>
-    ) {
-        if(paginatedQuery && 'page' in paginatedQuery) this.page = parseInt(paginatedQuery.page, 10)
-        if(paginatedQuery && 'pageSize' in paginatedQuery) this.pageSize = parseInt(paginatedQuery.pageSize, 10)
-    }
+    ) {}
 
     toFindOption(): FindManyOptions<T> {
         const options: FindManyOptions<T> = {
