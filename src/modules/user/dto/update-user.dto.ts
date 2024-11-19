@@ -9,8 +9,5 @@ export class UpdateUser {
     linkedin: User['linkedin'];
 
     @IsOptional()
-    role: User['role'];
-
-    @IsOptional()
     status: User['status'];
 }

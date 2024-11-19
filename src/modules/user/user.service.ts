@@ -48,9 +48,9 @@ export class UsersService {
     user.name = userInfo.name || user.name;
     user.linkedin = userInfo.linkedin || user.linkedin;
   
-    const updatedUser = await this.userRepository.save(userInfo)
+    await this.userRepository.save(userInfo)
 
-    return new UserResponse(updatedUser)
+    return new UserResponse(user)
   }
 
   async getUserByEmail(email: User['email']): Promise<UserResponse> {
@@ -75,9 +75,9 @@ export class UsersService {
     user.deletedAt = new Date();
     user.isActive = false;
 
-    const updatedUser = await this.userRepository.save(user);
+    await this.userRepository.save(user);
 
-    return new UserResponse(updatedUser)
+    return new UserResponse(user)
   }
 
   async restoreUser(id: User['id']): Promise<UserResponse> {
@@ -86,9 +86,9 @@ export class UsersService {
     user.deletedAt = null;
     user.isActive = true
 
-    const updatedUser = await this.userRepository.save(user);
+    await this.userRepository.save(user);
     
-    return new UserResponse(updatedUser);
+    return new UserResponse(user);
   }
 
 }

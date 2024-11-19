@@ -13,6 +13,7 @@ export class UserResponse {
         this.bio = user.bio;
         this.website = user.website;
         this.createdAt = user.createdAt;    
+        this.isActive = user.isActive;
     }
 
     id: string;
@@ -22,6 +23,7 @@ export class UserResponse {
     profile: string;
     linkedin: string;
     github: string;
+    isActive: boolean;
     bio: string;
     website: string;
     createdAt: Date;

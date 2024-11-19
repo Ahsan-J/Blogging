@@ -1,11 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UserController } from './user.controller';
-import { UsersService } from './user.service';
-import { User } from './user.entity';
-import { UserRole } from './user.enum';
-import { CreateUserRequest } from './dto/create-user.dto';
-import { UpdateUser } from './dto/update-user.dto';
-import { UserResponse } from './dto/user-response.dto';
+import { UserController } from '@/modules/user/user.controller';
+import { UsersService } from '@/modules/user/user.service';
+import { User } from '@/modules/user/user.entity';
+import { UserRole } from '@/modules/user/user.enum';
+import { CreateUserRequest } from '@/modules/user/dto/create-user.dto';
+import { UpdateUser } from '@/modules/user/dto/update-user.dto';
+import { UserResponse } from '@/modules/user/dto/user-response.dto';
 import { PaginateData, PaginatedFindParams, PaginationMeta } from '@/common/dto/pagination.dto';
 import { ObjectType } from '@/common/types/collection.type';
 import { FilterOperators } from 'typeorm';
@@ -113,7 +113,6 @@ describe('UserController', () => {
       const updateUserDto: UpdateUser = {
         name: 'Updated',
         linkedin: "https://api.linkedin.com",
-        role: UserRole.ADMIN,
         status: 1
       };
 

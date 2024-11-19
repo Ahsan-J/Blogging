@@ -1,12 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
-import { UserController } from './user.controller';
-import { UsersService } from './user.service';
-import { User } from './user.entity';
-import { UserResponse } from './dto/user-response.dto';
-import { CreateUserRequest } from './dto/create-user.dto';
-import { UpdateUser } from './dto/update-user.dto';
+import { UserController } from '@/modules/user/user.controller';
+import { UsersService } from '@/modules/user/user.service';
+import { User } from '@/modules/user/user.entity';
+import { UserResponse } from '@/modules/user/dto/user-response.dto';
+import { CreateUserRequest } from '@/modules/user/dto/create-user.dto';
+import { UpdateUser } from '@/modules/user/dto/update-user.dto';
 
 // Mock service methods
 const mockUserService = {
