@@ -45,6 +45,7 @@ export default [
             curly: "off",
             eqeqeq: "off",
             "jsx-quotes": "off",
+            "complexity": ["error", { "max": 7 }],
             "dot-notation": "off",
             semi: "off",
             quotes: "off",

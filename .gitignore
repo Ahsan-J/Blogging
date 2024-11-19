@@ -28,6 +28,7 @@ lerna-debug.log*
 
 # IDE - VSCode
 .vscode/*
+!.vscode/launch.json
 
 # my customs
 uploads

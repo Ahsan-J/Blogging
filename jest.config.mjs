@@ -2,6 +2,8 @@
 /** @type {import('jest').Config} */
 export default {
   preset: 'ts-jest',
+  maxWorkers: 2,
+  ci: true,
   // if using TypeScript with a baseUrl set to the root directory then you need the below for alias' to work
   clearMocks: true, // Automatically clear mock calls and instances between every test
   automock: false, // All imported modules in your tests should be mocked automatically
@@ -21,9 +23,15 @@ export default {
     '^design-component$': '<rootDir>design-component/index.ts',
     "^dexie$": "<rootDir>/node_modules/dexie"
   },
-  coverageReporters: ["html"],
+  coverageReporters: ["html-spa", "text"],
+  coverageThreshold: {
+    global: {
+      statements: 100
+    }
+  },
   testMatch:[ // The glob patterns Jest uses to detect test files
     "<rootDir>src/**/*.spec.[jt]s?(x)",
+    "<rootDir>test/**/*.spec.[jt]s?(x)",
     "<rootDir>spec/**/*.spec.[jt]s?(x)",
   ],
 }
