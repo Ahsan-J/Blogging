@@ -1,6 +1,6 @@
 // Add any custom config to be passed to Jest
 /** @type {import('jest').Config} */
-const customJestConfig = {
+export default {
   preset: 'ts-jest',
   // if using TypeScript with a baseUrl set to the root directory then you need the below for alias' to work
   clearMocks: true, // Automatically clear mock calls and instances between every test
@@ -27,6 +27,3 @@ const customJestConfig = {
     "<rootDir>spec/**/*.spec.[jt]s?(x)",
   ],
 }
-
-// createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async
-module.exports =customJestConfig

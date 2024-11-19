@@ -38,3 +38,4 @@ logging.db
 book_dump
 **/*.zip
 .vercel
+tsconfig.build.tsbuildinfo
