@@ -10,7 +10,7 @@ import { Component } from "./component.entity";
 const bitwiseOperator = new BitwiseOperator<ComponentStatus>();
 
 @Entity()
-export class PageComponents extends BaseModel {
+export class PageComponent extends BaseModel {
 
     @ManyToOne(() => Cell)
     @JoinColumn({name: 'parent_cell_id'})

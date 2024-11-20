@@ -23,9 +23,9 @@ export class Row extends BaseModel {
     @JoinColumn()
     cells: Array<Cell>;
 
-    @ManyToOne(() => Cell, cell => cell.rows)
+    @ManyToOne(() => Cell, cell => cell.rows, { nullable: true })
     @JoinColumn({name: 'parent_cell_id'})
-    parentCell: Cell;
+    parentCell: Cell | null = null;
 
     @ManyToOne(() => Page, page => page.rows)
     @JoinColumn()
