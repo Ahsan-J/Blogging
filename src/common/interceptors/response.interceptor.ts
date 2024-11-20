@@ -12,6 +12,7 @@ export class AppResponseInterceptor<T extends (ObjectType | Array<ObjectType>)> 
 
     return next.handle().pipe(
       map(data => {
+        if(data && typeof data != "object") return data
         const response = new AppResponse<T>(data, "", res.statusCode, res.statusMessage)
         if ("data" in data && 'meta' in data) {
           const response = new AppResponse<T>(data.data as T, "", res.statusCode, res.statusMessage)

@@ -1,6 +1,6 @@
 import { BaseModel } from "@/common/entity/base.entity";
 import { Column, Entity, JoinTable, OneToMany } from "typeorm";
-import { PageStatus, PageType } from "./page.enum";
+import { PageStatus, PageType } from "../page.enum";
 import { ObjectType } from "@/common/types/collection.type";
 import { BitwiseOperator } from "@/common/utils/bitwise.utility";
 import { Row } from "./row.entity";

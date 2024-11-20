@@ -11,7 +11,7 @@ export class ContactController {
         private contactService: ContactService,
     ) {}
     
-    @Post('contact')
+    @Post()
     async submitPortfolioContact(@Body() data:ContactPortfolioForm) {
         return await this.contactService.saveContactInfo(data);
     }

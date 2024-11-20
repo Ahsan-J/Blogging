@@ -1,6 +1,6 @@
 import { BaseModel } from "@/common/entity/base.entity";
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from "typeorm";
-import { RowStatus } from "./page.enum";
+import { RowStatus } from "../page.enum";
 import { ObjectType } from "@/common/types/collection.type";
 import { MetaKeywordTransformer } from "@/common/transformer/meta-keyword.transformer";
 import { BitwiseOperator } from "@/common/utils/bitwise.utility";

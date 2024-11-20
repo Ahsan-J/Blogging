@@ -1,6 +1,6 @@
 import { BaseModel } from "@/common/entity/base.entity";
 import { Column, Entity, ManyToOne } from "typeorm";
-import { ComponentCategory, ComponentStatus } from "./page.enum";
+import { ComponentCategory, ComponentStatus } from "../page.enum";
 import { ObjectType } from "@/common/types/collection.type";
 import { BitwiseOperator } from "@/common/utils/bitwise.utility";
 import { Cell } from "./cell.entity";
