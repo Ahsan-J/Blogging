@@ -6,16 +6,16 @@ export abstract class BaseModel {
     @PrimaryGeneratedColumn('uuid')
     public id: string;
 
-    @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+    @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', name: 'created_at' })
     public createdAt: Date;
 
     @Column({default: 1})
     protected status: number = 1;
 
-    @Column({ type: 'timestamp', nullable: true })
+    @Column({ type: 'timestamp', nullable: true, name: 'updated_at' })
     public updatedAt: Date | null;
 
-    @Column({ type: 'timestamp', nullable: true })
+    @Column({ type: 'timestamp', nullable: true, name: 'deleted_at' })
     public deletedAt: Date | null; 
 
     @BeforeInsert()

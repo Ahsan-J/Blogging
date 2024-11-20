@@ -7,6 +7,7 @@ import { BlogModule } from '@/modules/blog/blog.module';
 import { TokenModule } from '@/shared/token/token.module';
 import { DatabaseModule } from './database/database.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { PageBuilderModule } from './modules/page-builder/page-builder.module';
 
 
 @Module({
@@ -16,6 +17,7 @@ import { AuthModule } from './modules/auth/auth.module';
     ContactModule,
     AuthModule,
     UserModule,
+    PageBuilderModule,
     BlogModule,
     TokenModule,
   ],

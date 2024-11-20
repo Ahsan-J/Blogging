@@ -1,6 +1,6 @@
-import { IsEmail, IsEnum, IsNotEmpty, IsString } from "class-validator";
+import { IsEmail, IsNotEmpty, IsString } from "class-validator";
 import { User } from "@/modules/user/user.entity";
-import { UserRole } from "./user.enum";
+// import { UserRole } from "./user.enum";
 
 export class ChangeRoleBody {
 
@@ -10,6 +10,5 @@ export class ChangeRoleBody {
     email: User['email'];
 
     @IsNotEmpty()
-    @IsEnum(UserRole)
     role: User['role'];
 }
