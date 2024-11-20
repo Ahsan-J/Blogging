@@ -29,18 +29,7 @@ async function bootstrap() {
   app.useGlobalInterceptors(new AppResponseInterceptor());
   app.useGlobalInterceptors(new LoggerInterceptor())
 
-  app.useGlobalPipes(new ValidationPipe({
-    exceptionFactory: (errors) => new BadRequestException({
-      error: "Field validation failed",
-      validation: errors.reduce<ObjectType>((result, error) => {
-        if(error.constraints) {
-          result[error.property] = Object.values<string>(error.constraints).pop();
-        }
-        return result
-      }, {}),
-      statusCode: 400,
-    }),
-  }));
+  app.useGlobalPipes(validationPipe);
 
   app.enableVersioning({
     type: VersioningType.URI,
@@ -58,4 +47,18 @@ async function bootstrap() {
   SwaggerModule.setup('docs', app, document);
   await app.listen(configService.get("PORT", 3000));
 }
+
+const validationPipe = new ValidationPipe({
+  exceptionFactory: (errors) => new BadRequestException({
+    error: "Field validation failed",
+    validation: errors.reduce<ObjectType>((result, error) => {
+      if(error.constraints) {
+        result[error.property] = Object.values<string>(error.constraints).pop();
+      }
+      return result
+    }, {}),
+    statusCode: 400,
+  }),
+})
+
 bootstrap();

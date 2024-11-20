@@ -1,33 +1,27 @@
 import { BaseModel } from "@/common/entity/base.entity";
-import { Column, Entity, ManyToOne } from "typeorm";
-import { ComponentCategory, ComponentStatus } from "../page.enum";
+import { Column, Entity, JoinColumn, ManyToOne, OneToOne } from "typeorm";
+import { ComponentStatus } from "../page.enum";
 import { ObjectType } from "@/common/types/collection.type";
 import { BitwiseOperator } from "@/common/utils/bitwise.utility";
 import { Cell } from "./cell.entity";
 import { JsonTransformer } from "@/common/transformer/object.transformer";
+import { Component } from "./component.entity";
 
 const bitwiseOperator = new BitwiseOperator<ComponentStatus>();
 
 @Entity()
-export class Component extends BaseModel {
+export class PageComponents extends BaseModel {
 
     @ManyToOne(() => Cell)
+    @JoinColumn({name: 'parent_cell_id'})
     parent: Cell
 
     @Column()
     name: string;
 
-    @Column()
-    category: ComponentCategory;
-
-    @Column()
-    thumbnail: string;
-
-    @Column()
-    identifier: string;
-
-    @Column()
-    description: string;
+    @OneToOne(() => Component)
+    @JoinColumn({ name: "component_id" })
+    component: Component;
 
     @Column({ type: 'text', default: null, transformer: new JsonTransformer() })
     attributes: ObjectType | null;

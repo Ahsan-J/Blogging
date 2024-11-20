@@ -30,7 +30,7 @@ export class LoggerInterceptor implements NestInterceptor {
                 const duration = Date.now() - now;
                 const { method, url } = request;
 
-                this.logRequestMessage(method, url, duration, error.response.statusCode)
+                this.logRequestMessage(method, url, duration, error?.response?.statusCode || 500)
 
                 throw error;
             }),
