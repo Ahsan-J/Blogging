@@ -18,7 +18,7 @@ export class Row extends BaseModel {
     @Column()
     layout: string;
 
-    @OneToMany(() => Cell, cell => cell.parentRow)
+    @OneToMany(() => Cell, cell => cell.parentRow, { lazy: true })
     @JoinColumn()
     cells: Array<Cell>;
 

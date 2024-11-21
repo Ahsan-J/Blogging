@@ -1,5 +1,5 @@
 import { BaseModel } from "@/common/entity/base.entity";
-import { Column, Entity, JoinColumn, ManyToOne, OneToOne } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne } from "typeorm";
 import { ComponentStatus } from "../page.enum";
 import { ObjectType } from "@/common/types/collection.type";
 import { BitwiseOperator } from "@/common/utils/bitwise.utility";
@@ -19,7 +19,7 @@ export class PageComponent extends BaseModel {
     @Column()
     name: string;
 
-    @OneToOne(() => Component)
+    @ManyToOne(() => Component, { lazy: true })
     @JoinColumn({ name: "component_id" })
     component: Component;
 

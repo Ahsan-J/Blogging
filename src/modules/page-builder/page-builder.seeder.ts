@@ -28,7 +28,7 @@ export class PageBuilderDataSeeder implements DataSeeder<Page> {
     async seed(data: DeepPartial<Page>[]) {
         for (const partialPage of data) {
             if (!await this.pageRepository.findOne({ where: { id: partialPage.id } })) {
-                this.logger.log(`Adding user ${partialPage.id}`)
+                this.logger.log(`Adding page ${partialPage.id}`)
                 await this.pageRepository.save(await this.createPage(partialPage))
             }
         }
@@ -49,7 +49,9 @@ export class PageBuilderDataSeeder implements DataSeeder<Page> {
 
         const existing = await this.componentRepository.findOne({ where: { id: component.id } })
         if(existing) return existing
+        
         return await this.componentRepository.save(component);
+        // return component;
     }
 
     private async createPageComponent(data: Partial<PageComponent>): Promise<PageComponent> {
@@ -57,37 +59,54 @@ export class PageBuilderDataSeeder implements DataSeeder<Page> {
 
         pageComponent.id = data.id || pageComponent.id;
         pageComponent.name = this.getOrFallback(data.name);
-        pageComponent.component = await this.createComponent(data.component!) || pageComponent.component;
+        pageComponent.component = data.component ? await this.createComponent(data.component): pageComponent.component;
         pageComponent.attributes = data.attributes || pageComponent.attributes;
-        pageComponent.parent = data.parent || pageComponent.parent;
+        // pageComponent.parent = data.parent || pageComponent.parent;
         pageComponent.isActive = true;
 
         this.logger.log("Creating Page Component", pageComponent.id)
+
         const existing = await this.pageComponentRepository.findOne({ where: { id: pageComponent.id } })
         if(existing) return existing
 
         return await this.pageComponentRepository.save(pageComponent);
+
+        // return pageComponent;
     }
 
     private async createCell(data: Partial<Cell>): Promise<Cell> {
         const cell = new Cell();
 
-        cell.id = data.id || cell.id;
+        cell.id = this.getOrFallback(data.id, cell.id);
         cell.attributes = data.attributes || cell.attributes;
-        cell.components = data.components ? await Promise.all(data.components.map((component) => this.createPageComponent(component))) : []
+        cell.components = [];
+        cell.rows = [];
+
         cell.isActive = true;
 
-        cell.rows = data.rows ? await Promise.all(data.rows.map(async (row) => {
-            const cellRow = await this.createRow(row)
-            cellRow.parentCell = cell;
-            return cellRow;
-        })) : [];
+        if(data.components) {
+            for(const component of data.components) {
+                const comp = await this.createPageComponent(component)
+                comp.parent = cell;
+                cell.components.push(comp)
+            }
+        }
+        
+        if(data.rows) {
+            for(const row of data.rows){
+                const cellRow = await this.createRow(row)
+                cellRow.parentCell = cell;
+                cell.rows.push(cellRow);
+            }
+        }
 
         this.logger.log("Creating Cell", cell.id)
         const existing = await this.cellRepository.findOne({ where: { id: cell.id } })
         if(existing) return existing
         
         return await this.cellRepository.save(cell);
+
+        // return cell;
     }
 
     private async createRow(data: Partial<Row>): Promise<Row> {
@@ -95,15 +114,25 @@ export class PageBuilderDataSeeder implements DataSeeder<Page> {
 
         row.id = data.id || row.id;
         row.attributes = data.attributes || row.attributes;
-        row.cells = data.cells ? await Promise.all(data.cells.map(cell => this.createCell(cell))): [];
+        row.title = data.title || row.title
         row.isActive = true;
         row.layout = this.getOrFallback(data.layout, "12");
 
+        row.cells = [];
+
+        if(data.cells) {
+            for(const cell of data.cells) {
+                row.cells.push(await this.createCell(cell))
+            }
+        }
+        
         this.logger.log("Creating Row", row.id)
         const existing = await this.rowRepository.findOne({ where: { id: row.id } })
         if(existing) return existing
 
         return await this.rowRepository.save(row);
+
+        // return row
     }
 
     private async createPage(data: Partial<Page>): Promise<Page> {
@@ -118,12 +147,15 @@ export class PageBuilderDataSeeder implements DataSeeder<Page> {
         page.pageType = data.pageType || page.pageType;
         page.password = data.password;
 
-        page.rows = data.rows ? await Promise.all(data.rows.map(async (row) => {
-            const pageRow = await this.createRow(row)
-            pageRow.page = page;
-            return pageRow;
-        })) : [];
+        page.rows = []
 
+        if(data.rows) {
+            for(const row of data.rows){
+                const pageRow = await this.createRow(row)
+                pageRow.page = page;
+                page.rows.push(pageRow);
+            }
+        }
         return page
     }
 

@@ -1,7 +1,10 @@
-import { Injectable } from "@nestjs/common";
-import { ComponentResponse, RegisterComponentRequest } from "./dto/register-component.dto";
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { RegisterComponentRequest } from "./dto/register-component.dto";
 import { PageRepository } from "./repository/page.repository";
 import { ComponentRepository } from "./repository/component.repository";
+import { PageResponse } from "./dto/page-response.dto";
+import { Page } from "./entity/page.entity";
+import { ComponentResponse } from "./dto/component-response.dto";
 
 @Injectable()
 export class PageBuilderService {
@@ -21,5 +24,11 @@ export class PageBuilderService {
 
         const savedComponent = await this.componentRepository.save(component);
         return new ComponentResponse(savedComponent)
+    }
+
+    async getPageById(id: Page['id']): Promise<PageResponse> {
+        const page = await this.pageRepository.findOne({where: {id}});
+        if(!page) throw new NotFoundException("Page not found");
+        return new PageResponse().lazyFetch(page)
     }
 }

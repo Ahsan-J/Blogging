@@ -16,14 +16,14 @@ export class Cell extends BaseModel {
     @JoinColumn({name: 'parent_row_id'})
     parentRow: Row
 
-    @OneToMany(()=> Row, row => row.parentCell)
+    @OneToMany(()=> Row, row => row.parentCell, { lazy: true })
     @JoinColumn()
     rows: Array<Row>;
 
     @Column({ type: "text", default: null, transformer: new JsonTransformer() })
-    attributes: ObjectType;
+    attributes?: ObjectType;
 
-    @OneToMany(() => PageComponent, component => component.parent)
+    @OneToMany(() => PageComponent, component => component.parent, { lazy: true })
     @JoinColumn()
     components: Array<PageComponent>;
 
