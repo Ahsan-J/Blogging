@@ -2,7 +2,7 @@ import { Controller, Post, Body, Get, Query, UseInterceptors, UploadedFile, Rend
 import { LoginRequest, LoginResponse } from './dto/login.dto';
 import { RegisterUserRequest } from './dto/register.dto';
 import { AuthService } from './auth.service';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiQuery, ApiTags } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { getStorage } from '@/common/utils/storage.utility';
 import { ResetPasswordRequest } from './dto/reset.dto';
@@ -52,6 +52,7 @@ export class AuthController {
   }
 
   @Get('activate')
+  @ApiQuery({ name: 'code', required: true, type: String, description: 'Activate code number for pagination' })
   async activateUser(@Query() query: ActivateUserBody): Promise<LoginResponse> {
     return this.authService.validateActivationCode(query.code);
   }

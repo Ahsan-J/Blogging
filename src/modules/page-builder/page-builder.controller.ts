@@ -1,6 +1,6 @@
 import { AuthUser } from "@/common/decorator/auth.decorator";
 import { Body, Controller, Get, Param, Post } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiParam, ApiTags } from "@nestjs/swagger";
 import { User } from "@/modules/user/user.entity";
 import { PageBuilderService } from "./page-builder.service";
 import { RegisterComponentRequest } from "./dto/register-component.dto";
@@ -20,9 +20,10 @@ export class PageBuilderController {
         return user
     }
 
-    @Get(':id')
-    async getPageById(@Param("id") id: string): Promise<PageResponse> {
-        return this.pageBuilderService.getPageById(id);
+    @Get(':name')
+    @ApiParam({ name: 'name', required: true, type: String, description: 'Page fetching by alias' })
+    async getPageByPageAlias(@Param("name") name: string): Promise<PageResponse> {
+        return this.pageBuilderService.getPageByPageAlias(name);
     }
 
     @Post('register/component')

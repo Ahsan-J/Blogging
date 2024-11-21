@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Query, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { PaginateData, PaginatedFindParams } from '@/common/dto/pagination.dto';
 import { AuthGuard, UseRoles } from '@/common/guards/auth.guard';
 import { SieveFilter } from '@/common/pipes/sieve-filter.pipe';
@@ -26,6 +26,10 @@ export class UserController {
   ) { }
 
   @Get()
+  @ApiQuery({ name: 'page', required: false, type: Number, default: 1, description: 'Page number for pagination' })
+  @ApiQuery({ name: 'pageSize', required: false, default: 10, description: 'Maximum number of items in a single page' })
+  @ApiQuery({ name: 'filters', required: false, type: String, description: 'Sieve filter to query data' })
+  @ApiQuery({ name: 'sorts', required: false, type: Number, description: 'Sieve sort to sort data' })
   async getUsers(
     @Query('page') page: string,
     @Query('pageSize') pageSize: string,
@@ -49,7 +53,7 @@ export class UserController {
     return this.userService.createUser(body, profile);
   }
 
-  @Put('/:id')
+  @Put(':id')
   @UseRoles(UserRole.ADMIN)
   async updateUser(@Body() body: UpdateUser, @Param('id') id: string): Promise<UserResponse> {
     return this.userService.updateUser(id, body)

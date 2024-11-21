@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Post, Query, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
-import { ApiBearerAuth, ApiConsumes, ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiConsumes, ApiParam, ApiQuery, ApiTags } from "@nestjs/swagger";
 import { PaginateData, PaginatedFindParams } from "@/common/dto/pagination.dto";
 import { SieveFilter } from "@/common/pipes/sieve-filter.pipe";
 import { getStorage } from "@/common/utils/storage.utility";
@@ -24,11 +24,15 @@ export class BlogController {
     ) { }
 
     @Get()
+    @ApiQuery({ name: 'page', required: false, type: Number, default: 1, description: 'Page number for pagination' })
+    @ApiQuery({ name: 'pageSize', required: false, default: 10, description: 'Maximum number of items in a single page' })
+    @ApiQuery({ name: 'filters', required: false, type: String, description: 'Sieve filter to query data' })
+    @ApiQuery({ name: 'sorts', required: false, type: Number, description: 'Sieve sort to sort data' })
     async getBlogs(
-        @Query('page') page: string,
-        @Query('pageSize') pageSize: string, 
-        @Query('filters', SieveFilter) filters: Array<ObjectType<FilterOperators<string>>>, 
-        @Query('sorts', SieveSort) sorts: FindOptionsOrder<Blog>
+        @Query('page') page: string = "1",
+        @Query('pageSize') pageSize: string = "10", 
+        @Query('filters', SieveFilter) filters?: Array<ObjectType<FilterOperators<string>>>, 
+        @Query('sorts', SieveSort) sorts?: FindOptionsOrder<Blog>
     ): Promise<PaginateData<BlogResponse>> {
         const findParams = new PaginatedFindParams(parseInt(page,10), parseInt(pageSize,10), filters, sorts)
         return this.blogService.getBlogs(findParams);
@@ -48,6 +52,7 @@ export class BlogController {
     }
 
     @Get(':id')
+    @ApiParam({ name: 'id', required: true, type: Number, description: 'Blog id to fetch' })
     async getBlogPost(@Param("id") id: string): Promise<BlogResponse> {
         return this.blogService.getBlogById(id);
     }
@@ -55,6 +60,7 @@ export class BlogController {
     @Delete(':id')
     @UseGuards(AuthGuard)
     @ApiBearerAuth('AccessToken')
+    @ApiParam({ name: 'id', required: true, type: Number, description: 'Blog id to delete' })
     async deleteBlog(@Param("id") id: string, @AuthUser() user: User) {
         this.blogService.deleteBlog(id, user);
     }
@@ -62,6 +68,7 @@ export class BlogController {
     @Post(':id/like')
     @UseGuards(AuthGuard)
     @ApiBearerAuth('AccessToken')
+    @ApiParam({ name: 'id', required: true, type: Number, description: 'Blog id to like' })
     async likeBlog(@Param("id") id: string, @AuthUser() user: User) {
         return this.blogService.likeBlog(id, user);
     }
@@ -69,16 +76,21 @@ export class BlogController {
     @Post(':id/unlike')
     @UseGuards(AuthGuard)
     @ApiBearerAuth('AccessToken')
+    @ApiParam({ name: 'id', required: true, type: Number, description: 'Blog id to unlike' })
     async unlikeBlog(@Param("id") id: string, @AuthUser() user: User) {
         return this.blogService.unlikeBlog(id, user);
     }
 
     @Get(":id/likes")
+    @ApiParam({ name: 'id', required: true, type: Number, description: 'Blog id to fetch' })
+    @ApiQuery({ name: 'page', required: false, type: Number, default: 1, description: 'Page number for pagination' })
+    @ApiQuery({ name: 'pageSize', required: false, type: Number, default: 10, description: 'Maximum number of items in a single page' })
+    @ApiQuery({ name: 'sorts', required: false, type: Number, description: 'Sieve sort to sort data' })
     async getPostLikes(
         @Param("id") id: string, 
-        @Query('page') page: string,
-        @Query('pageSize') pageSize: string,
-        @Query('sorts', SieveSort) sorts: FindOptionsOrder<Blog>,
+        @Query('page') page: string = "1",
+        @Query('pageSize') pageSize: string = "10",
+        @Query('sorts', SieveSort) sorts?: FindOptionsOrder<Blog>,
     ) {
         const findParams = new PaginatedFindParams(parseInt(page,10), parseInt(pageSize,10), [], sorts)
         const blog = await this.blogService.getBlogById(id);

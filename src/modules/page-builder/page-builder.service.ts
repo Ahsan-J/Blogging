@@ -26,8 +26,8 @@ export class PageBuilderService {
         return new ComponentResponse(savedComponent)
     }
 
-    async getPageById(id: Page['id']): Promise<PageResponse> {
-        const page = await this.pageRepository.findOne({where: {id}});
+    async getPageByPageAlias(alias: Page['alias']): Promise<PageResponse> {
+        const page = await this.pageRepository.findOne({where: { alias }});
         if(!page) throw new NotFoundException("Page not found");
         return new PageResponse().lazyFetch(page)
     }
