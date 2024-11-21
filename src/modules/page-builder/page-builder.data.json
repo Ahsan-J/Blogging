@@ -1,0 +1,478 @@
+[
+    {
+        "id": "CyRtGHGgi-GQjTMhq4WRd",
+        "name": "Sample Page",
+        "alias": "sample",
+        "pageType": 0,
+        "openGraph": null,
+        "isPublished": true,
+        "rows": [
+            {
+                "id": "2qqRceHXWjKJdAK3",
+                "title": "New Row",
+                "layout": "12",
+                "cells": [
+                    {
+                        "id": "hBVh0OBdNStS5j8Z",
+                        "rows": [],
+                        "components": [
+                            {
+                                "id": "DFbDj8wfsv34N46p",
+                                "name": "Header",
+                                "component": {
+                                    "id": "nbNawbb6EARTuASUwMHlo",
+                                    "category": 1,
+                                    "description": "",
+                                    "thumbnail": "assets/img/builder-components/image.svg",
+                                    "name": "Header",
+                                    "identifier": "trv-header"
+                                },
+                                "attributes": {}
+                            }
+                        ],
+                        "attributes": {}
+                    }
+                ],
+                "attributes": {}
+            },
+            {
+                "id": "C52NUWz8YHMTaBC8",
+                "title": "New Row",
+                "layout": "6+6",
+                "cells": [
+                    {
+                        "id": "84Qrd47j9WzrUgVe",
+                        "rows": [
+                            {
+                                "id": "nLfqrBMosBf55I2A",
+                                "title": "New Row",
+                                "layout": "12",
+                                "cells": [
+                                    {
+                                        "id": "c4bFODErHbPhTJni",
+                                        "rows": [],
+                                        "components": [
+                                            {
+                                                "id": "gVQ5gfRCP7usMjFG",
+                                                "name": "Image",
+                                                "component": {
+                                                    "id": "nbNawbb6EARTuASUwMHlo",
+                                                    "category": 1,
+                                                    "description": "",
+                                                    "thumbnail": "https://s3.ap-south-1.amazonaws.com/arjaa/uploads/0/Logo/SearchWidgetPageBuilder636969764319951912.JPG",
+                                                    "name": "Image",
+                                                    "identifier": "image"
+                                                },
+                                                "attributes": {}
+                                            }
+                                        ],
+                                        "attributes": {}
+                                    }
+                                ],
+                                "attributes": {}
+                            },
+                            {
+                                "id": "hVnGluy9r9o07iob",
+                                "title": "New Row",
+                                "layout": "6+6",
+                                "cells": [
+                                    {
+                                        "id": "n5OmuveWtysseH03",
+                                        "rows": [],
+                                        "components": [
+                                            {
+                                                "id": "aUVrzZkW2e4BSD8n",
+                                                "name": "Image",
+                                                "component": {
+                                                    "id": "nbNawbb6EARTuASUwMHlo",
+                                                    "category": 1,
+                                                    "description": "",
+                                                    "thumbnail": "https://s3.ap-south-1.amazonaws.com/arjaa/uploads/0/Logo/SearchWidgetPageBuilder636969764319951912.JPG",
+                                                    "name": "Image",
+                                                    "identifier": "image"
+                                                },
+                                                "attributes": {
+                                                    "src": "https://s3.ap-south-1.amazonaws.com/arjaa/uploads/0/Logo/Hotel_en637060668833154081.jpg"
+                                                }
+                                            }
+                                        ],
+                                        "attributes": {}
+                                    },
+                                    {
+                                        "id": "ySUAxMSmVMF8rBE2",
+                                        "rows": [],
+                                        "components": [
+                                            {
+                                                "id": "kEr1rNztXeuf1mbU",
+                                                "component": {
+                                                    "id": "nbNawbb6EARTuASUwMHlo",
+                                                    "category": 1,
+                                                    "description": "",
+                                                    "thumbnail": "https://s3.ap-south-1.amazonaws.com/arjaa/uploads/0/Logo/SearchWidgetPageBuilder636969764319951912.JPG",
+                                                    "name": "Image",
+                                                    "identifier": "image"
+                                                },
+                                                "name": "Image",
+                                                "attributes": {
+                                                    "src": "https://s3.ap-south-1.amazonaws.com/arjaa/uploads/0/Logo/Webbanner-EN636972145661938192637060668949957302.jpg"
+                                                }
+                                            }
+                                        ],
+                                        "attributes": {}
+                                    }
+                                ],
+                                "attributes": {}
+                            }
+                        ],
+                        "components": [],
+                        "attributes": {}
+                    },
+                    {
+                        "id": "YDx3wJea6FQ7zak9",
+                        "rows": [],
+                        "components": [
+                            {
+                                "id": "8EDJBNLbI1pxcB2r",
+                                "name": "Search Widget",
+                                "component": {
+                                    "category": 2,
+                                    "description": "",
+                                    "identifier": "Search_Widget",
+                                    "thumbnail": "https://s3.ap-south-1.amazonaws.com/arjaa/uploads/0/Logo/SearchWidget636969787047210363.png",
+                                    "name": "Search Widget"
+                                },
+                                "attributes": {
+                                    "types": [
+                                        {
+                                            "value": "trvflightsearch",
+                                            "label": "Flight",
+                                            "checked": true
+                                        },
+                                        {
+                                            "value": "trvhotelsearch",
+                                            "label": "Hotel",
+                                            "checked": true
+                                        },
+                                        {
+                                            "value": "trvtoursearch",
+                                            "label": "Tour",
+                                            "checked": true
+                                        },
+                                        {
+                                            "value": "trvpackagesearch",
+                                            "label": "Package",
+                                            "checked": true
+                                        }
+                                    ],
+                                    "title": "What can we book for you for the day?",
+                                    "color": "PrimaryColor",
+                                    "trvflightsearch": {
+                                        "origin": {},
+                                        "destination": {},
+                                        "blackoutDateRange": [],
+                                        "travelDates": {},
+                                        "adult": {},
+                                        "child": {},
+                                        "infant": {}
+                                    },
+                                    "trvhotelsearch": {
+                                        "destination": {
+                                            "inclusion": [],
+                                            "exclusion": []
+                                        },
+                                        "checkInCheckOut": {},
+                                        "blackOutDateRange": [],
+                                        "hotelPassengers": [
+                                            {
+                                                "adult": {},
+                                                "child": {},
+                                                "roomNumber": null
+                                            }
+                                        ]
+                                    },
+                                    "trvtoursearch": {
+                                        "destination": {
+                                            "inclusion": [],
+                                            "exclusion": []
+                                        }
+                                    },
+                                    "trvpackagesearch": {
+                                        "trvflightsearch": {
+                                            "origin": {},
+                                            "destination": {},
+                                            "blackoutDateRange": [],
+                                            "travelDates": {},
+                                            "adult": {},
+                                            "child": {},
+                                            "infant": {},
+                                            "hotelPassengers": [
+                                                {
+                                                    "adult": {},
+                                                    "child": {}
+                                                }
+                                            ]
+                                        },
+                                        "trvhotelsearch": {
+                                            "destination": {
+                                                "inclusion": [],
+                                                "exclusion": []
+                                            },
+                                            "checkInCheckOut": {},
+                                            "hotelPassengers": [
+                                                {
+                                                    "adult": {},
+                                                    "child": {}
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        ],
+                        "attributes": {}
+                    }
+                ],
+                "attributes": {}
+            },
+            {
+                "id": "LaEe6Fi7MsgXN6FT",
+                "title": "New Row",
+                "layout": "6+6",
+                "cells": [
+                    {
+                        "id": "pNvXsxVaucPnRAnm",
+                        "rows": [
+                            {
+                                "id": "Eq6iUe4IqgsCAKwI",
+                                "title": "New Row",
+                                "layout": "12",
+                                "cells": [
+                                    {
+                                        "id": "Nd7KwDyhjiMAU6eH",
+                                        "rows": [],
+                                        "components": [
+                                            {
+                                                "id": "sLybhjltouBMRI3M",
+                                                "name": "image",
+                                                "component": {
+                                                    "id": "nbNawbb6EARTuASUwMHlo",
+                                                    "category": 1,
+                                                    "description": "",
+                                                    "thumbnail": "https://s3.ap-south-1.amazonaws.com/arjaa/uploads/0/Logo/SearchWidgetPageBuilder636969764319951912.JPG",
+                                                    "name": "Image",
+                                                    "identifier": "image"
+                                                },
+                                                "attributes": {
+                                                    "src": "https://s3.ap-south-1.amazonaws.com/arjaa/uploads/0/Logo/Webbanner-EN636972145661938192637060671222301482.jpg"
+                                                }
+                                            }
+                                        ],
+                                        "attributes": {}
+                                    }
+                                ],
+                                "attributes": {}
+                            },
+                            {
+                                "id": "KjOhVdEi453RKBFw",
+                                "title": "New Row",
+                                "layout": "6+6",
+                                "cells": [
+                                    {
+                                        "id": "kxknkVg4hGWasvFj",
+                                        "rows": [],
+                                        "components": [
+                                            {
+                                                "id": "FK5KlALnrE4vIm0l",
+                                                "name": "image",
+                                                "component": {
+                                                    "id": "nbNawbb6EARTuASUwMHlo",
+                                                    "category": 1,
+                                                    "description": "",
+                                                    "thumbnail": "https://s3.ap-south-1.amazonaws.com/arjaa/uploads/0/Logo/SearchWidgetPageBuilder636969764319951912.JPG",
+                                                    "name": "Image",
+                                                    "identifier": "image"
+                                                },
+                                                "attributes": {
+                                                    "src": "https://s3.ap-south-1.amazonaws.com/arjaa/uploads/0/Logo/Hotel_en637060668833154081.jpg"
+                                                }
+                                            }
+                                        ],
+                                        "attributes": {}
+                                    },
+                                    {
+                                        "id": "73N0c5mXCL2NvbZW",
+                                        "rows": [],
+                                        "components": [
+                                            {
+                                                "id": "fBiNLSvLDJ3Qkyss",
+                                                "component": {
+                                                    "id": "nbNawbb6EARTuASUwMHlo",
+                                                    "category": 1,
+                                                    "description": "",
+                                                    "thumbnail": "https://s3.ap-south-1.amazonaws.com/arjaa/uploads/0/Logo/SearchWidgetPageBuilder636969764319951912.JPG",
+                                                    "name": "Image",
+                                                    "identifier": "image"
+                                                },
+                                                "name": "image",
+                                                "attributes": {
+                                                    "src": "https://s3.ap-south-1.amazonaws.com/arjaa/uploads/0/Logo/Webbanner-EN636972145661938192637060679844680450.jpg"
+                                                }
+                                            }
+                                        ],
+                                        "attributes": {}
+                                    }
+                                ],
+                                "attributes": {}
+                            }
+                        ],
+                        "components": [],
+                        "attributes": {}
+                    },
+                    {
+                        "id": "JlPHcmLiYNcdtvG1",
+                        "rows": [
+                            {
+                                "id": "FjKjDWjNCu47zY5d",
+                                "title": "New Row",
+                                "layout": "6+6",
+                                "cells": [
+                                    {
+                                        "id": "oQggxt79z7V3dl8U",
+                                        "rows": [],
+                                        "components": [
+                                            {
+                                                "id": "bINHZWjo9ASV3rqO",
+                                                "component": {
+                                                    "id": "nbNawbb6EARTuASUwMHlo",
+                                                    "category": 1,
+                                                    "description": "",
+                                                    "thumbnail": "https://s3.ap-south-1.amazonaws.com/arjaa/uploads/0/Logo/SearchWidgetPageBuilder636969764319951912.JPG",
+                                                    "name": "Image",
+                                                    "identifier": "image"
+                                                },
+                                                "name": "Image",
+                                                "attributes": {
+                                                    "src": "https://s3.ap-south-1.amazonaws.com/arjaa/uploads/0/Logo/Hotel_en637060668833154081.jpg\",\"imageUrl\":\"https://s3.ap-south-1.amazonaws.com/arjaa/uploads/0/Logo/Hotel_en637060679942189144.jpg"
+                                                }
+                                            }
+                                        ],
+                                        "attributes": {}
+                                    },
+                                    {
+                                        "id": "PxYGFlNEnV8CC8WZ",
+                                        "rows": [],
+                                        "components": [
+                                            {
+                                                "id": "pCxqTLXxJmKguNVD",
+                                                "name":"Image",
+                                                "component": {
+                                                    "id": "nbNawbb6EARTuASUwMHlo",
+                                                    "category": 1,
+                                                    "description": "",
+                                                    "thumbnail": "https://s3.ap-south-1.amazonaws.com/arjaa/uploads/0/Logo/SearchWidgetPageBuilder636969764319951912.JPG",
+                                                    "name": "Image",
+                                                    "identifier": "image"
+                                                },
+                                                "attributes": {}
+                                            }
+                                        ],
+                                        "attributes": {}
+                                    }
+                                ],
+                                "attributes": {}
+                            },
+                            {
+                                "id": "KK8mYn8VojYcVAYk",
+                                "title": "New Row",
+                                "layout": "12",
+                                "cells": [
+                                    {
+                                        "id": "GBBZl9O0GISS0ul1",
+                                        "rows": [],
+                                        "components": [
+                                            {
+                                                "id": "P79l8FAhYsrUo1Yn",
+                                                "name": "image",
+                                                "component": {
+                                                    "id": "nbNawbb6EARTuASUwMHlo",
+                                                    "category": 1,
+                                                    "description": "",
+                                                    "thumbnail": "https://s3.ap-south-1.amazonaws.com/arjaa/uploads/0/Logo/SearchWidgetPageBuilder636969764319951912.JPG",
+                                                    "name": "Image",
+                                                    "identifier": "image"
+                                                },
+                                                "attributes": {}
+                                            }
+                                        ],
+                                        "attributes": {}
+                                    }
+                                ],
+                                "attributes": {}
+                            }
+                        ],
+                        "components": [],
+                        "attributes": {}
+                    }
+                ],
+                "attributes": {}
+            },
+            {
+                "id": "TqfR3tsIMsMhBgL6",
+                "title": "New Row",
+                "layout": "12",
+                "cells": [
+                    {
+                        "id": "RZzhOU4bLtfZoH94",
+                        "rows": [],
+                        "components": [
+                            {
+                                "id": "K4iIvSVuBNPgEzQ9",
+                                "component": {
+                                    "id": "o6gHJsPs1IM4ZNgnm2Rjn",
+                                    "category": 1,
+                                    "description": "",
+                                    "thumbnail": "https://s3.ap-south-1.amazonaws.com/arjaa/uploads/0/Logo/SearchWidgetPageBuilder636969764319951912.JPG",
+                                    "name": "Terms And Conditions",
+                                    "identifier": "termsandconditions"
+                                },
+                                "name":"Terms And Conditions",
+                                "attributes": {}
+                            }
+                        ],
+                        "attributes": {}
+                    }
+                ],
+                "attributes": {}
+            },
+            {
+                "id": "0dHcko7Hb6VYW2fu",
+                "title": "New Row",
+                "layout": "12",
+                "cells": [
+                    {
+                        "id": "IAEHRJpNUzewt7j2",
+                        "rows": [],
+                        "components": [
+                            {
+                                "id": "jvk4HPrSBaotvUmj",
+                                "component": {
+                                    "id": "_kOjqvdCRvwejyM0fsjEb",
+                                    "category": 1,
+                                    "description": "",
+                                    "thumbnail": "assets/img/builder-components/image.svg",
+                                    "name": "Footer",
+                                    "identifier": "trv-footer"
+                                },
+                                "name": "Footer",
+                                "attributes": {}
+                            }
+                        ],
+                        "attributes": {}
+                    }
+                ],
+                "attributes": {}
+            }
+        ],
+        "isActive": false
+    }
+]

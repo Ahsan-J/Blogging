@@ -2,7 +2,6 @@ import { BaseModel } from "@/common/entity/base.entity";
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from "typeorm";
 import { RowStatus } from "../page.enum";
 import { ObjectType } from "@/common/types/collection.type";
-import { MetaKeywordTransformer } from "@/common/transformer/meta-keyword.transformer";
 import { BitwiseOperator } from "@/common/utils/bitwise.utility";
 import { Cell } from "./cell.entity";
 import { Page } from "./page.entity";
@@ -25,20 +24,14 @@ export class Row extends BaseModel {
 
     @ManyToOne(() => Cell, cell => cell.rows, { nullable: true })
     @JoinColumn({name: 'parent_cell_id'})
-    parentCell: Cell | null = null;
+    parentCell?: Cell;
 
-    @ManyToOne(() => Page, page => page.rows)
+    @ManyToOne(() => Page, page => page.rows, { nullable: true })
     @JoinColumn()
-    page: Page;
+    page?: Page;
 
-    @Column({ type: "text", default: null, transformer: new JsonTransformer() })
-    attributes: ObjectType;
-
-    @Column({type: 'text', transformer: new MetaKeywordTransformer()})
-    meta: ObjectType<string>;
-
-    @Column()
-    password: string;
+    @Column({ type: "text", default: null, nullable:true, transformer: new JsonTransformer() })
+    attributes?: ObjectType;
 
     get isActive(): boolean {
         return bitwiseOperator.hasValue(this.status, RowStatus.ACTIVE)

@@ -83,7 +83,7 @@ export class UsersService {
   async restoreUser(id: User['id']): Promise<UserResponse> {
     const user = await this.userRepository.findUserById(id);
     
-    user.deletedAt = null;
+    user.deletedAt = undefined;
     user.isActive = true
 
     await this.userRepository.save(user);

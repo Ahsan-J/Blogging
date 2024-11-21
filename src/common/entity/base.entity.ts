@@ -13,10 +13,10 @@ export abstract class BaseModel {
     protected status: number = 1;
 
     @Column({ type: 'timestamp', nullable: true, name: 'updated_at' })
-    public updatedAt: Date | null;
+    public updatedAt?: Date;
 
     @Column({ type: 'timestamp', nullable: true, name: 'deleted_at' })
-    public deletedAt: Date | null; 
+    public deletedAt?: Date; 
 
     @BeforeInsert()
     private setCreatedAt() {

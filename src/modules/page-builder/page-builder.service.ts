@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { ComponentResponse, RegisterComponentRequest } from "./dto/register-component.dto";
 import { PageRepository } from "./repository/page.repository";
-import { ComponentRepository } from "./repository/page-component.repository";
+import { ComponentRepository } from "./repository/component.repository";
 
 @Injectable()
 export class PageBuilderService {

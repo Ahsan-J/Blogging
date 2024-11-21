@@ -1,13 +1,13 @@
 import { Injectable } from "@nestjs/common";
 import { Repository } from "typeorm";
-import { PageComponent } from "../entity/page-component.entity";
 import { InjectRepository } from "@nestjs/typeorm";
+import { Row } from "../entity/row.entity";
 
 @Injectable()
-export class PageComponentRepository extends Repository<PageComponent> {
+export class RowRepository extends Repository<Row> {
     constructor( 
-        @InjectRepository(PageComponent)
-        repository: Repository<PageComponent>
+        @InjectRepository(Row)
+        repository: Repository<Row>
     ) {
         super(repository.target, repository.manager, repository.queryRunner);
     }

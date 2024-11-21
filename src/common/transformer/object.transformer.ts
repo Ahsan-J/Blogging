@@ -4,13 +4,13 @@ import { Logger } from '@nestjs/common';
 
 export class JsonTransformer implements ValueTransformer {
 
-    private logger = new Logger(JsonTransformer.name);
+  private logger = new Logger(JsonTransformer.name);
 
-  to(value: ObjectType<string | number>): string | null {
-    if (value === null || value === undefined) {
-      return null;
+  to(value: ObjectType<string | number>): string | undefined {
+    if (!value) {
+      return undefined;
     }
-    
+
     try {
       return JSON.stringify(value);
     } catch (error) {
@@ -19,9 +19,9 @@ export class JsonTransformer implements ValueTransformer {
     }
   }
 
-  from(value: string): ObjectType<string> | null {
-    if (value === null || value === undefined) {
-      return null;
+  from(value: string): ObjectType<string> | undefined {
+    if (!value) {
+      return undefined;
     }
     try {
       return JSON.parse(value);

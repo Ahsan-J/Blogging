@@ -24,7 +24,7 @@ export class PageComponent extends BaseModel {
     component: Component;
 
     @Column({ type: 'text', default: null, transformer: new JsonTransformer() })
-    attributes: ObjectType | null;
+    attributes?: ObjectType;
 
     get isActive(): boolean {
         return bitwiseOperator.hasValue(this.status, ComponentStatus.ACTIVE)

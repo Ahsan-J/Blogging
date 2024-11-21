@@ -21,16 +21,16 @@ export class Page extends BaseModel {
     pageType: PageType;
 
     @Column({ type: 'text', default: null, name: "custom_js" })
-    customJs: string | null;
+    customJs: string;
 
     @Column({ default: null, type: 'text', name: "custom_css" })
-    customCss: string | null;
+    customCss: string ;
 
-    @Column({type: 'text', transformer: new JsonTransformer()})
-    meta: ObjectType<string>;
+    @Column({type: 'text', transformer: new JsonTransformer(), nullable: true, default: null})
+    meta?: ObjectType<string>;
 
-    @Column()
-    password: string;
+    @Column({ nullable: true })
+    password?: string;
 
     @OneToMany(() => Row, row => row.page)
     @JoinTable()
