@@ -19,14 +19,10 @@
                             {
                                 "id": "DFbDj8wfsv34N46p",
                                 "name": "Header",
-                                "component": {
-                                    "id": "nbNawbb6EARTuASUwMHlo",
-                                    "category": 1,
-                                    "description": "",
-                                    "thumbnail": "assets/img/builder-components/image.svg",
-                                    "name": "Header",
-                                    "identifier": "trv-header"
-                                },
+                                "category": 1,
+                                "description": "",
+                                "thumbnail": "assets/img/builder-components/image.svg",
+                                "identifier": "trv-header",
                                 "attributes": {}
                             }
                         ],
@@ -54,15 +50,11 @@
                                         "components": [
                                             {
                                                 "id": "gVQ5gfRCP7usMjFG",
+                                                "category": 1,
+                                                "description": "",
+                                                "thumbnail": "https://s3.ap-south-1.amazonaws.com/arjaa/uploads/0/Logo/SearchWidgetPageBuilder636969764319951912.JPG",
                                                 "name": "Image",
-                                                "component": {
-                                                    "id": "nbNawbb6EARTuASUwMHlo",
-                                                    "category": 1,
-                                                    "description": "",
-                                                    "thumbnail": "https://s3.ap-south-1.amazonaws.com/arjaa/uploads/0/Logo/SearchWidgetPageBuilder636969764319951912.JPG",
-                                                    "name": "Image",
-                                                    "identifier": "image"
-                                                },
+                                                "identifier": "image",
                                                 "attributes": {}
                                             }
                                         ],
@@ -83,14 +75,10 @@
                                             {
                                                 "id": "aUVrzZkW2e4BSD8n",
                                                 "name": "Image",
-                                                "component": {
-                                                    "id": "nbNawbb6EARTuASUwMHlo",
-                                                    "category": 1,
-                                                    "description": "",
-                                                    "thumbnail": "https://s3.ap-south-1.amazonaws.com/arjaa/uploads/0/Logo/SearchWidgetPageBuilder636969764319951912.JPG",
-                                                    "name": "Image",
-                                                    "identifier": "image"
-                                                },
+                                                "category": 1,
+                                                "description": "",
+                                                "thumbnail": "https://s3.ap-south-1.amazonaws.com/arjaa/uploads/0/Logo/SearchWidgetPageBuilder636969764319951912.JPG",
+                                                "identifier": "image",
                                                 "attributes": {
                                                     "src": "https://s3.ap-south-1.amazonaws.com/arjaa/uploads/0/Logo/Hotel_en637060668833154081.jpg"
                                                 }
@@ -104,15 +92,11 @@
                                         "components": [
                                             {
                                                 "id": "kEr1rNztXeuf1mbU",
-                                                "component": {
-                                                    "id": "nbNawbb6EARTuASUwMHlo",
-                                                    "category": 1,
-                                                    "description": "",
-                                                    "thumbnail": "https://s3.ap-south-1.amazonaws.com/arjaa/uploads/0/Logo/SearchWidgetPageBuilder636969764319951912.JPG",
-                                                    "name": "Image",
-                                                    "identifier": "image"
-                                                },
+                                                "category": 1,
+                                                "description": "",
+                                                "thumbnail": "https://s3.ap-south-1.amazonaws.com/arjaa/uploads/0/Logo/SearchWidgetPageBuilder636969764319951912.JPG",
                                                 "name": "Image",
+                                                "identifier": "image",
                                                 "attributes": {
                                                     "src": "https://s3.ap-south-1.amazonaws.com/arjaa/uploads/0/Logo/Webbanner-EN636972145661938192637060668949957302.jpg"
                                                 }
@@ -133,14 +117,11 @@
                         "components": [
                             {
                                 "id": "8EDJBNLbI1pxcB2r",
+                                "category": 2,
+                                "description": "",
+                                "identifier": "Search_Widget",
+                                "thumbnail": "https://s3.ap-south-1.amazonaws.com/arjaa/uploads/0/Logo/SearchWidget636969787047210363.png",
                                 "name": "Search Widget",
-                                "component": {
-                                    "category": 2,
-                                    "description": "",
-                                    "identifier": "Search_Widget",
-                                    "thumbnail": "https://s3.ap-south-1.amazonaws.com/arjaa/uploads/0/Logo/SearchWidget636969787047210363.png",
-                                    "name": "Search Widget"
-                                },
                                 "attributes": {
                                     "types": [
                                         {
@@ -253,15 +234,11 @@
                                         "components": [
                                             {
                                                 "id": "sLybhjltouBMRI3M",
-                                                "name": "image",
-                                                "component": {
-                                                    "id": "nbNawbb6EARTuASUwMHlo",
-                                                    "category": 1,
-                                                    "description": "",
-                                                    "thumbnail": "https://s3.ap-south-1.amazonaws.com/arjaa/uploads/0/Logo/SearchWidgetPageBuilder636969764319951912.JPG",
-                                                    "name": "Image",
-                                                    "identifier": "image"
-                                                },
+                                                "category": 1,
+                                                "description": "",
+                                                "thumbnail": "https://s3.ap-south-1.amazonaws.com/arjaa/uploads/0/Logo/SearchWidgetPageBuilder636969764319951912.JPG",
+                                                "name": "Image",
+                                                "identifier": "image",
                                                 "attributes": {
                                                     "src": "https://s3.ap-south-1.amazonaws.com/arjaa/uploads/0/Logo/Webbanner-EN636972145661938192637060671222301482.jpg"
                                                 }
@@ -283,15 +260,11 @@
                                         "components": [
                                             {
                                                 "id": "FK5KlALnrE4vIm0l",
-                                                "name": "image",
-                                                "component": {
-                                                    "id": "nbNawbb6EARTuASUwMHlo",
-                                                    "category": 1,
-                                                    "description": "",
-                                                    "thumbnail": "https://s3.ap-south-1.amazonaws.com/arjaa/uploads/0/Logo/SearchWidgetPageBuilder636969764319951912.JPG",
-                                                    "name": "Image",
-                                                    "identifier": "image"
-                                                },
+                                                "category": 1,
+                                                "description": "",
+                                                "thumbnail": "https://s3.ap-south-1.amazonaws.com/arjaa/uploads/0/Logo/SearchWidgetPageBuilder636969764319951912.JPG",
+                                                "name": "Image",
+                                                "identifier": "image",
                                                 "attributes": {
                                                     "src": "https://s3.ap-south-1.amazonaws.com/arjaa/uploads/0/Logo/Hotel_en637060668833154081.jpg"
                                                 }
@@ -305,15 +278,11 @@
                                         "components": [
                                             {
                                                 "id": "fBiNLSvLDJ3Qkyss",
-                                                "component": {
-                                                    "id": "nbNawbb6EARTuASUwMHlo",
-                                                    "category": 1,
-                                                    "description": "",
-                                                    "thumbnail": "https://s3.ap-south-1.amazonaws.com/arjaa/uploads/0/Logo/SearchWidgetPageBuilder636969764319951912.JPG",
-                                                    "name": "Image",
-                                                    "identifier": "image"
-                                                },
-                                                "name": "image",
+                                                "category": 1,
+                                                "description": "",
+                                                "thumbnail": "https://s3.ap-south-1.amazonaws.com/arjaa/uploads/0/Logo/SearchWidgetPageBuilder636969764319951912.JPG",
+                                                "name": "Image",
+                                                "identifier": "image",
                                                 "attributes": {
                                                     "src": "https://s3.ap-south-1.amazonaws.com/arjaa/uploads/0/Logo/Webbanner-EN636972145661938192637060679844680450.jpg"
                                                 }
@@ -342,14 +311,10 @@
                                         "components": [
                                             {
                                                 "id": "bINHZWjo9ASV3rqO",
-                                                "component": {
-                                                    "id": "nbNawbb6EARTuASUwMHlo",
-                                                    "category": 1,
-                                                    "description": "",
-                                                    "thumbnail": "https://s3.ap-south-1.amazonaws.com/arjaa/uploads/0/Logo/SearchWidgetPageBuilder636969764319951912.JPG",
-                                                    "name": "Image",
-                                                    "identifier": "image"
-                                                },
+                                                "category": 1,
+                                                "description": "",
+                                                "thumbnail": "https://s3.ap-south-1.amazonaws.com/arjaa/uploads/0/Logo/SearchWidgetPageBuilder636969764319951912.JPG",
+                                                "identifier": "image",
                                                 "name": "Image",
                                                 "attributes": {
                                                     "src": "https://s3.ap-south-1.amazonaws.com/arjaa/uploads/0/Logo/Hotel_en637060668833154081.jpg\",\"imageUrl\":\"https://s3.ap-south-1.amazonaws.com/arjaa/uploads/0/Logo/Hotel_en637060679942189144.jpg"
@@ -364,15 +329,11 @@
                                         "components": [
                                             {
                                                 "id": "pCxqTLXxJmKguNVD",
-                                                "name":"Image",
-                                                "component": {
-                                                    "id": "nbNawbb6EARTuASUwMHlo",
-                                                    "category": 1,
-                                                    "description": "",
-                                                    "thumbnail": "https://s3.ap-south-1.amazonaws.com/arjaa/uploads/0/Logo/SearchWidgetPageBuilder636969764319951912.JPG",
-                                                    "name": "Image",
-                                                    "identifier": "image"
-                                                },
+                                                "name": "Image",
+                                                "category": 1,
+                                                "description": "",
+                                                "thumbnail": "https://s3.ap-south-1.amazonaws.com/arjaa/uploads/0/Logo/SearchWidgetPageBuilder636969764319951912.JPG",
+                                                "identifier": "image",
                                                 "attributes": {}
                                             }
                                         ],
@@ -393,14 +354,10 @@
                                             {
                                                 "id": "P79l8FAhYsrUo1Yn",
                                                 "name": "image",
-                                                "component": {
-                                                    "id": "nbNawbb6EARTuASUwMHlo",
-                                                    "category": 1,
-                                                    "description": "",
-                                                    "thumbnail": "https://s3.ap-south-1.amazonaws.com/arjaa/uploads/0/Logo/SearchWidgetPageBuilder636969764319951912.JPG",
-                                                    "name": "Image",
-                                                    "identifier": "image"
-                                                },
+                                                "category": 1,
+                                                "description": "",
+                                                "thumbnail": "https://s3.ap-south-1.amazonaws.com/arjaa/uploads/0/Logo/SearchWidgetPageBuilder636969764319951912.JPG",
+                                                "identifier": "image",
                                                 "attributes": {}
                                             }
                                         ],
@@ -427,15 +384,11 @@
                         "components": [
                             {
                                 "id": "K4iIvSVuBNPgEzQ9",
-                                "component": {
-                                    "id": "o6gHJsPs1IM4ZNgnm2Rjn",
-                                    "category": 1,
-                                    "description": "",
-                                    "thumbnail": "https://s3.ap-south-1.amazonaws.com/arjaa/uploads/0/Logo/SearchWidgetPageBuilder636969764319951912.JPG",
-                                    "name": "Terms And Conditions",
-                                    "identifier": "termsandconditions"
-                                },
-                                "name":"Terms And Conditions",
+                                "category": 1,
+                                "description": "",
+                                "thumbnail": "https://s3.ap-south-1.amazonaws.com/arjaa/uploads/0/Logo/SearchWidgetPageBuilder636969764319951912.JPG",
+                                "identifier": "termsandconditions",
+                                "name": "Terms And Conditions",
                                 "attributes": {}
                             }
                         ],
@@ -455,14 +408,10 @@
                         "components": [
                             {
                                 "id": "jvk4HPrSBaotvUmj",
-                                "component": {
-                                    "id": "_kOjqvdCRvwejyM0fsjEb",
-                                    "category": 1,
-                                    "description": "",
-                                    "thumbnail": "assets/img/builder-components/image.svg",
-                                    "name": "Footer",
-                                    "identifier": "trv-footer"
-                                },
+                                "category": 1,
+                                "description": "",
+                                "thumbnail": "assets/img/builder-components/image.svg",
+                                "identifier": "trv-footer",
                                 "name": "Footer",
                                 "attributes": {}
                             }

@@ -1,7 +1,7 @@
 import { ObjectType } from "@/common/types/collection.type";
 import { Cell } from "../entity/cell.entity";
 import { RowResponse } from "./row-response.dto";
-import { PageComponentResponse } from "./page-component-response.dto";
+import { ComponentResponse } from "./component-response.dto";
 
 export class CellResponse {
     async lazyFetch(cell: Cell) {
@@ -13,7 +13,7 @@ export class CellResponse {
         }
 
         for(const component of await cell.components) {
-            this.components.push(await new PageComponentResponse().lazyFetch(component))
+            this.components.push(await new ComponentResponse().lazyFetch(component))
         }
 
         return this;
@@ -25,11 +25,11 @@ export class CellResponse {
         this.rows = cell.rows.map(r => new RowResponse(r))
         this.attributes = cell.attributes
         this.isActive = cell.isActive
-        this.components = cell.components.map(pc => new PageComponentResponse(pc))
+        this.components = cell.components.map(pc => new ComponentResponse(pc))
     }
 
     rows: Array<RowResponse> = [];
     attributes?: ObjectType;
-    components: Array<PageComponentResponse> = [];
+    components: Array<ComponentResponse> = [];
     isActive: boolean
 }

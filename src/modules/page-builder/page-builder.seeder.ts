@@ -3,11 +3,9 @@ import { Injectable, Logger } from "@nestjs/common";
 import { Page } from "./entity/page.entity";
 import { Component } from "./entity/component.entity";
 import { PageRepository } from "./repository/page.repository";
-import { PageComponent } from "./entity/page-component.entity";
 import { Cell } from "./entity/cell.entity";
 import { Row } from "./entity/row.entity";
 import { DeepPartial } from "@/common/types/collection.type";
-import { PageComponentRepository } from "./repository/page-component.repository";
 import { ComponentRepository } from "./repository/component.repository";
 import { CellRepository } from "./repository/cell.repository";
 import { RowRepository } from "./repository/row.repository";
@@ -19,7 +17,6 @@ export class PageBuilderDataSeeder implements DataSeeder<Page> {
 
     constructor(
         private pageRepository: PageRepository,
-        private pageComponentRepository: PageComponentRepository,
         private cellRepository: CellRepository,
         private rowRepository: RowRepository,
         private componentRepository: ComponentRepository,
@@ -34,7 +31,7 @@ export class PageBuilderDataSeeder implements DataSeeder<Page> {
         }
     }
     
-    private async createComponent(data: Partial<Component>): Promise<Component> {
+    private async createPageComponent(data: Partial<Component>): Promise<Component> {
         const component = new Component();
 
         component.id = data.id || component.id;
@@ -44,32 +41,14 @@ export class PageBuilderDataSeeder implements DataSeeder<Page> {
         component.description = this.getOrFallback(data.description);
         component.thumbnail = this.getOrFallback(data.thumbnail);
         component.isActive = true;
+        component.attributes = data.attributes || component.attributes;
 
-        this.logger.log("Creating Component", component.id)
+        this.logger.log("Creating Page Component", component.id)
 
         const existing = await this.componentRepository.findOne({ where: { id: component.id } })
         if(existing) return existing
-        
+
         return await this.componentRepository.save(component);
-        // return component;
-    }
-
-    private async createPageComponent(data: Partial<PageComponent>): Promise<PageComponent> {
-        const pageComponent = new PageComponent();
-
-        pageComponent.id = data.id || pageComponent.id;
-        pageComponent.name = this.getOrFallback(data.name);
-        pageComponent.component = data.component ? await this.createComponent(data.component): pageComponent.component;
-        pageComponent.attributes = data.attributes || pageComponent.attributes;
-        // pageComponent.parent = data.parent || pageComponent.parent;
-        pageComponent.isActive = true;
-
-        this.logger.log("Creating Page Component", pageComponent.id)
-
-        const existing = await this.pageComponentRepository.findOne({ where: { id: pageComponent.id } })
-        if(existing) return existing
-
-        return await this.pageComponentRepository.save(pageComponent);
 
         // return pageComponent;
     }

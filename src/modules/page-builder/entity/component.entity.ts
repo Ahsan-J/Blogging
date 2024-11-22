@@ -1,12 +1,18 @@
 import { BaseModel } from "@/common/entity/base.entity";
 import { BitwiseOperator } from "@/common/utils/bitwise.utility";
-import { Column, Entity } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne } from "typeorm";
 import { ComponentCategory, ComponentStatus } from "../page.enum";
+import { Cell } from "./cell.entity";
+import { JsonTransformer } from "@/common/transformer/object.transformer";
+import { ObjectType } from "@/common/types/collection.type";
 
 const bitwiseOperator = new BitwiseOperator<ComponentStatus>();
 
 @Entity()
 export class Component extends BaseModel {
+    @ManyToOne(() => Cell)
+    @JoinColumn({name: 'parent_cell_id'})
+    parent: Cell
 
     @Column()
     name: string;
@@ -17,11 +23,14 @@ export class Component extends BaseModel {
     @Column()
     thumbnail: string;
 
-    @Column({ unique: true })
+    @Column()
     identifier: string;
 
     @Column()
     description: string;
+
+    @Column({ type: 'text', default: null, transformer: new JsonTransformer() })
+    attributes?: ObjectType;
 
     get isActive(): boolean {
         return bitwiseOperator.hasValue(this.status, ComponentStatus.ACTIVE)

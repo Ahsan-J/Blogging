@@ -4,7 +4,7 @@ import { CellStatus } from "../page.enum";
 import { ObjectType } from "@/common/types/collection.type";
 import { BitwiseOperator } from "@/common/utils/bitwise.utility";
 import { Row } from "./row.entity";
-import { PageComponent } from "./page-component.entity";
+import { Component } from "./component.entity";
 import { JsonTransformer } from "@/common/transformer/object.transformer";
 
 const bitwiseOperator = new BitwiseOperator<CellStatus>();
@@ -23,9 +23,9 @@ export class Cell extends BaseModel {
     @Column({ type: "text", default: null, transformer: new JsonTransformer() })
     attributes?: ObjectType;
 
-    @OneToMany(() => PageComponent, component => component.parent, { lazy: true })
+    @OneToMany(() => Component, component => component.parent, { lazy: true })
     @JoinColumn()
-    components: Array<PageComponent>;
+    components: Array<Component>;
 
     get isActive(): boolean {
         return bitwiseOperator.hasValue(this.status, CellStatus.ACTIVE)
