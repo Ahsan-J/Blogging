@@ -10,9 +10,9 @@ const bitwiseOperator = new BitwiseOperator<ComponentStatus>();
 
 @Entity()
 export class Component extends BaseModel {
-    @ManyToOne(() => Cell)
-    @JoinColumn({name: 'parent_cell_id'})
-    parent: Cell
+    @ManyToOne(() => Cell, cell => cell.components)
+    @JoinColumn({ name: 'parent_cell_id' })
+    parent: Cell;
 
     @Column()
     name: string;
@@ -37,7 +37,7 @@ export class Component extends BaseModel {
     }
 
     set isActive(value: boolean) {
-        if(value) {
+        if (value) {
             this.status = bitwiseOperator.setValue(this.status, ComponentStatus.ACTIVE)
         } else {
             this.status = bitwiseOperator.removeValue(this.status, ComponentStatus.ACTIVE)

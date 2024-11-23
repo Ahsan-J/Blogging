@@ -1,5 +1,5 @@
 import { BaseModel } from "@/common/entity/base.entity";
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from "typeorm";
+import { Column, Entity, JoinColumn, JoinTable, ManyToOne, OneToMany } from "typeorm";
 import { RowStatus } from "../page.enum";
 import { ObjectType } from "@/common/types/collection.type";
 import { BitwiseOperator } from "@/common/utils/bitwise.utility";
@@ -9,7 +9,7 @@ import { JsonTransformer } from "@/common/transformer/object.transformer";
 
 const bitwiseOperator = new BitwiseOperator<RowStatus>();
 
-@Entity()
+@Entity({ name: 'row' })
 export class Row extends BaseModel {
 
     @Column()
@@ -18,15 +18,15 @@ export class Row extends BaseModel {
     @Column()
     layout: string;
 
-    @OneToMany(() => Cell, cell => cell.parentRow, { lazy: true })
-    @JoinColumn()
+    @OneToMany(() => Cell, cell => cell.parentRow, {  lazy: true })
+    @JoinTable()
     cells: Array<Cell>;
 
     @ManyToOne(() => Cell, cell => cell.rows, { nullable: true })
     @JoinColumn({name: 'parent_cell_id'})
     parentCell?: Cell;
 
-    @ManyToOne(() => Page, page => page.rows, { nullable: true })
+    @ManyToOne(() => Page, { nullable: true, lazy: true })
     @JoinColumn()
     page?: Page;
 
