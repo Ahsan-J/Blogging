@@ -2,13 +2,12 @@ import { User } from "@/modules/user/user.entity";
 import { Injectable, Logger } from "@nestjs/common";
 import { DataSeeder } from "@/common/interface/seeder.interface";
 import { UserRepository } from "@/modules/user/user.repository";
-import { nanoid } from "nanoid";
 
 const users: Array<Partial<User>> = [
     {
         "id": "GovsHS03z-oJTzX9ZMZXb",
         "email": "ahsan@yopmail.com",
-        "linkedin": "",
+        "linkedin": "https://linkedin.com/in/ahsan-j",
         "name": "Ahsan Ahmed",
         "profile": "",
         "password": "49220c04e202c0a7c454e885f172221b6d54ef733bc33a604aa37e2e8207d829",
@@ -35,9 +34,9 @@ export class UserDataSeeder implements DataSeeder<User> {
     }
 
     private createUser(data: Partial<User>): User {
-        const user = new User();
+        const user = this.userRepository.create();
 
-        user.id = data.id || nanoid();
+        user.id = this.getOrFallback(data.id, user.id);
         user.name = this.getOrFallback(data.name);
         user.email = this.getOrFallback(data.email);
         user.linkedin = this.getOrFallback(data.linkedin);

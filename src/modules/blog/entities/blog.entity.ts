@@ -1,8 +1,8 @@
 import { BaseModel } from "@/common/entity/base.entity";
 import { Column, Entity, Index, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany } from "typeorm";
 import { User } from "@/modules/user/user.entity";
-import { Comment } from "@/modules/comment/comment.entity";
-import { BlogStatus } from "./blog.enum";
+import { Comment } from "@/modules/blog/entities/comment.entity";
+import { BlogStatus } from "../blog.enum";
 import { BitwiseOperator } from "@/common/utils/bitwise.utility";
 
 @Entity()
@@ -10,26 +10,29 @@ export class Blog extends BaseModel {
 
     private readonly bitwiseOperator = new BitwiseOperator<BlogStatus>();
 
-    @Index({fulltext: true})
+    @Index({ fulltext: true })
     @Column()
     title: string;
 
-    @Index({fulltext: true})
+    @Index({ fulltext: true })
     @Column()
     description: string;
 
-    @Column()
+    @Column({ type: "text" })
     content: string;
 
-    @ManyToOne(() => User, user => user.blogs)
+    @Column({ type: "text", nullable: true })
+    cover?: string;
+
+    @ManyToOne(() => User, user => user.blogs, { lazy: true })
     @JoinColumn()
     author: User;
 
-    @ManyToMany(() => User, user => user.like_blogs)
+    @ManyToMany(() => User, user => user.like_blogs, { lazy: true })
     @JoinTable()
     likes: User[];
 
-    @OneToMany(() => Comment, comment => comment.blog)
+    @OneToMany(() => Comment, comment => comment.blog, { lazy: true })
     @JoinTable()
     comments: Comment[];
 
@@ -38,7 +41,7 @@ export class Blog extends BaseModel {
     }
 
     set isActive(value: boolean) {
-        if(value) {
+        if (value) {
             this.status = this.bitwiseOperator.setValue(this.status, BlogStatus.ACTIVE)
         } else {
             this.status = this.bitwiseOperator.removeValue(this.status, BlogStatus.ACTIVE)
@@ -50,7 +53,7 @@ export class Blog extends BaseModel {
     }
 
     set isPublished(value: boolean) {
-        if(value) {
+        if (value) {
             this.status = this.bitwiseOperator.setValue(this.status, BlogStatus.PUBLISH)
         } else {
             this.status = this.bitwiseOperator.removeValue(this.status, BlogStatus.PUBLISH)
@@ -62,7 +65,7 @@ export class Blog extends BaseModel {
     }
 
     set isBlocked(value: boolean) {
-        if(value) {
+        if (value) {
             this.status = this.bitwiseOperator.setValue(this.status, BlogStatus.BLOCKED)
         } else {
             this.status = this.bitwiseOperator.removeValue(this.status, BlogStatus.BLOCKED)

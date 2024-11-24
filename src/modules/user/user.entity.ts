@@ -2,7 +2,7 @@ import { BaseModel } from "@/common/entity/base.entity";
 import { Column, Entity, ManyToMany, OneToMany } from "typeorm";
 import { Exclude } from "class-transformer";
 import { UserRole, UserStatus } from "./user.enum";
-import { Blog } from "@/modules/blog/blog.entity";
+import { Blog } from "@/modules/blog/entities/blog.entity";
 import { BitwiseOperator } from "@/common/utils/bitwise.utility";
 
 

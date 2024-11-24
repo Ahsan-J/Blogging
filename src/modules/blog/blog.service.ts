@@ -1,12 +1,13 @@
 import { ForbiddenException, Injectable, Logger } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Blog } from "./blog.entity";
+import { Blog } from "./entities/blog.entity";
 import { CreateBlog } from './dto/create-blog.dto';
 import { User } from "@/modules/user/user.entity";
 import { PaginateData, PaginatedFindParams, PaginationMeta } from "@/common/dto/pagination.dto";
 import { BlogResponse } from "./dto/blog-response.dto";
 import { BlogRepository } from "./blog.repository";
 import { InvalidInstanceofException } from "@/common/exceptions/instanceof.exception";
+import { BlogListItem } from "./dto/blog-listing-item.dto";
 
 @Injectable()
 export class BlogService {
@@ -18,23 +19,21 @@ export class BlogService {
         private blogRepository: BlogRepository,
     ) { }
 
-    async getBlogs(options: PaginatedFindParams<Blog>): Promise<PaginateData<BlogResponse>> {
+    async getBlogs(options: PaginatedFindParams<Blog>): Promise<PaginateData<BlogListItem>> {
 
         // validation check to make sure only instances are allowed
-        if(!(options instanceof PaginatedFindParams)) throw new InvalidInstanceofException("PaginatedFindParams")
+        if (!(options instanceof PaginatedFindParams)) throw new InvalidInstanceofException("PaginatedFindParams")
 
-        const blogsQuery = this.blogRepository.createQueryBuilder('blog')
-            .limit(options.pageSize)
-            .offset((options.page - 1) * options.pageSize);
+        const [result, count] = await this.blogRepository.findAndCount(options.toFindOption());
 
-        options.applyFilters(blogsQuery);
-        options.applySorts(blogsQuery);
-
-        const [result, count] = await blogsQuery.getManyAndCount();
-     
         const meta = new PaginationMeta(count, options.page, options.pageSize);
-        const blogResponseList = result.map(b => new BlogResponse(b))
-        
+
+        const blogResponseList = [];
+
+        for (const blog of result) {
+            blogResponseList.push(await new BlogListItem().lazyFetch(blog))
+        }
+
         return new PaginateData(blogResponseList, meta)
     }
 
@@ -52,7 +51,7 @@ export class BlogService {
         blog.isPublished = true
 
         const savedBlog = await this.blogRepository.save(blog);
-        return new BlogResponse(savedBlog)
+        return await new BlogResponse().lazyFetch(savedBlog)
     }
 
     async getBlogById(id: string): Promise<BlogResponse> {
@@ -66,9 +65,9 @@ export class BlogService {
             .printSql()
             .getOne()
 
-        if(!blog) throw new Error
+        if (!blog) throw new Error
 
-        return new BlogResponse(blog)
+        return await new BlogResponse().lazyFetch(blog)
     }
 
     async toggleLike(user: User, blog: Blog) {
@@ -118,19 +117,24 @@ export class BlogService {
 
         const savedBlog = await this.blogRepository.save(blog);
 
-        return new BlogResponse(savedBlog);
+        return await new BlogResponse().lazyFetch(savedBlog);
     }
 
     async getBlogLikes(blogId: Blog['id'], options: PaginatedFindParams<Blog>): Promise<PaginateData<BlogResponse>> {
-        
+
         const [result, count] = await this.blogRepository.createQueryBuilder("blog")
             .leftJoinAndSelect("blog.likes", "user")
-            .where("blog.id = :id", {id: blogId})
+            .where("blog.id = :id", { id: blogId })
             .getManyAndCount();
-        
+
         const meta = new PaginationMeta(count, options.page, options.pageSize);
-        const blogResponseList = result.map(b => new BlogResponse(b))
-        
+        const blogResponseList = []
+
+        for (const blog of result) {
+            blogResponseList.push(await new BlogResponse().lazyFetch(blog))
+        }
+
         return new PaginateData(blogResponseList, meta)
     }
+
 }

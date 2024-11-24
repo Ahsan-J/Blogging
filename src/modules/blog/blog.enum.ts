@@ -3,3 +3,7 @@ export const enum BlogStatus {
     PUBLISH,
     BLOCKED
 }
+
+export const enum CommentStatus {
+    ACTIVE
+}

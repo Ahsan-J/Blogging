@@ -55,10 +55,10 @@ export class UserRepository extends Repository<User> {
 
   async findUserByEmailOrNull(email: User['email']): Promise<User | null> {
     if (!email) return null;
-  
+
     return await this.findOne({
       where: { email },
     });
   }
-  
+
 };
