@@ -4,7 +4,7 @@ import { RegisterUserRequest } from './dto/register.dto';
 import { AuthService } from './auth.service';
 import { ApiQuery, ApiTags } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { getStorage } from '@/common/utils/storage.utility';
+import { StorageGenerator } from '@/common/utils/storage.utility';
 import { ResetPasswordRequest } from './dto/reset.dto';
 import { ForgotPasswordRequest } from './dto/forgot.dto';
 import { ActivateUserBody } from './dto/activation.dto';
@@ -24,7 +24,7 @@ export class AuthController {
   }
 
   @Post('register')
-  @UseInterceptors(FileInterceptor('profile', { storage: getStorage('profile') }))
+  @UseInterceptors(FileInterceptor('profile', { storage: new StorageGenerator('profile').getStorage() }))
   async registerUser(
     @Body() body: RegisterUserRequest, 
     @UploadedFile() profile: Express.Multer.File

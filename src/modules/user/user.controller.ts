@@ -7,7 +7,7 @@ import { User } from './user.entity';
 import { UserRole } from './user.enum';
 import { UsersService } from './user.service';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { getStorage } from '@/common/utils/storage.utility';
+import { StorageGenerator } from '@/common/utils/storage.utility';
 import { AuthUser } from '@/common/decorator/auth.decorator';
 import { ObjectType } from '@/common/types/collection.type';
 import { FilterOperators, FindOptionsOrder } from 'typeorm';
@@ -42,13 +42,15 @@ export class UserController {
   }
 
   @Get('self')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('AccessToken')
   async getAuthUser(@AuthUser() user: User): Promise<UserResponse> {
     return new UserResponse(user);
   }
 
   @Post('create')
   @UseRoles(UserRole.ADMIN)
-  @UseInterceptors(FileInterceptor('profile', { storage: getStorage('profile') }))
+  @UseInterceptors(FileInterceptor('profile', { storage: new StorageGenerator('profile').getStorage() }))
   async createUser(@Body() body: CreateUserRequest, @UploadedFile() profile: Express.Multer.File): Promise<UserResponse> {
     return this.userService.createUser(body, profile);
   }

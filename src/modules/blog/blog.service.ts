@@ -1,5 +1,4 @@
-import { ForbiddenException, Injectable, Logger } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
+import { ForbiddenException, Injectable } from "@nestjs/common";
 import { Blog } from "./entities/blog.entity";
 import { CreateBlog } from './dto/create-blog.dto';
 import { User } from "@/modules/user/user.entity";
@@ -12,19 +11,13 @@ import { BlogListItem } from "./dto/blog-listing-item.dto";
 @Injectable()
 export class BlogService {
 
-    private logger = new Logger()
-
     constructor(
-        @InjectRepository(Blog)
         private blogRepository: BlogRepository,
     ) { }
 
     async getBlogs(options: PaginatedFindParams<Blog>): Promise<PaginateData<BlogListItem>> {
 
-        // validation check to make sure only instances are allowed
-        if (!(options instanceof PaginatedFindParams)) throw new InvalidInstanceofException("PaginatedFindParams")
-
-        const [result, count] = await this.blogRepository.findAndCount(options.toFindOption());
+        const [result, count] = await this.blogRepository.findActivePublishedBlogs(options);
 
         const meta = new PaginationMeta(count, options.page, options.pageSize);
 
@@ -37,15 +30,34 @@ export class BlogService {
         return new PaginateData(blogResponseList, meta)
     }
 
-    async createBlog(newBlog: CreateBlog, author: User, banner: Express.Multer.File): Promise<BlogResponse> {
+    async getBlogsByUser(options: PaginatedFindParams<Blog>, user: User): Promise<PaginateData<BlogListItem>> {
+        // validation check to make sure only instances are allowed
+        if (!(options instanceof PaginatedFindParams)) throw new InvalidInstanceofException("PaginatedFindParams")
+
+        const findOptions = options.toFindOption();
+        findOptions.where = { ...findOptions.where, author: { id: user.id }}
+
+        const [result, count] = await this.blogRepository.findAndCount(findOptions);
+
+        const meta = new PaginationMeta(count, options.page, options.pageSize);
+
+        const blogResponseList = [];
+
+        for (const blog of result) {
+            blogResponseList.push(await new BlogListItem().lazyFetch(blog))
+        }
+
+        return new PaginateData(blogResponseList, meta)
+    }
+
+    async createBlog(newBlog: CreateBlog, author: User, cover: Express.Multer.File): Promise<BlogResponse> {
         const blog = await this.blogRepository.create({
             author,
+            cover: cover.path,
             title: newBlog.title,
             content: newBlog.content,
             description: newBlog.description,
         });
-
-        this.logger.log(banner)
 
         blog.isActive = true
         blog.isPublished = true
@@ -62,7 +74,6 @@ export class BlogService {
             .leftJoin('blog.comments', 'comment.blog')
             .loadRelationCountAndMap('blog.comments_count', 'blog.comments')
             .leftJoinAndSelect("blog.author", "user")
-            .printSql()
             .getOne()
 
         if (!blog) throw new Error
@@ -122,10 +133,7 @@ export class BlogService {
 
     async getBlogLikes(blogId: Blog['id'], options: PaginatedFindParams<Blog>): Promise<PaginateData<BlogResponse>> {
 
-        const [result, count] = await this.blogRepository.createQueryBuilder("blog")
-            .leftJoinAndSelect("blog.likes", "user")
-            .where("blog.id = :id", { id: blogId })
-            .getManyAndCount();
+        const [result, count] = await this.blogRepository.findBlogLikes(blogId, options);
 
         const meta = new PaginationMeta(count, options.page, options.pageSize);
         const blogResponseList = []

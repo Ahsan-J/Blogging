@@ -1,6 +1,6 @@
 import { IsNumber } from "class-validator";
-import { FindManyOptions, FindOptionsOrder, FindOptionsWhere, ObjectLiteral, SelectQueryBuilder } from "typeorm";
-import { applyFiltersToQueryBuilder } from "../utils/sieve.utility";
+import { FindManyOptions, FindOptionsOrder, FindOptionsWhere, ObjectLiteral } from "typeorm";
+import { ObjectType } from "../types/collection.type";
 
 export class PaginationMeta {
     
@@ -61,13 +61,16 @@ export class PaginatedFindParams<T extends ObjectLiteral> {
         return options
     }
 
-    applyFilters(queryBuilder: SelectQueryBuilder<T>): SelectQueryBuilder<T> {
-        return applyFiltersToQueryBuilder(queryBuilder, this.filters);
+    toQueryWhere(): FindOptionsWhere<T> | FindOptionsWhere<T>[] | undefined {
+        return this.filters;
     }
 
-    applySorts(queryBuilder: SelectQueryBuilder<T>) {
-        // queryBuilder.orderBy(this.sorts)
-        return queryBuilder;
+    toQueryOrder(): ObjectType<"ASC" | "DESC"> {
+        return Object.keys(this.sorts || {}).reduce<ObjectType<"ASC" | "DESC" >>((result, key) => {
+            const value = this.sorts?.[key] as "ASC" | "DESC";
+            result[key] = value;
+            return result;
+        }, {});
     }
 }
 
