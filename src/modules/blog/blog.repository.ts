@@ -19,7 +19,7 @@ export class BlogRepository extends Repository<Blog> {
         super(repository.target, repository.manager, repository.queryRunner);
     }
 
-    async findActivePublishedBlogs(options: PaginatedFindParams<Blog>): Promise<[Blog[], number]> {
+    async findAllActivePublishedBlogs(options: PaginatedFindParams<Blog>): Promise<[Blog[], number]> {
         // validation check to make sure only instances are allowed
         
         if (!(options instanceof PaginatedFindParams)) throw new InvalidInstanceofException("PaginatedFindParams")

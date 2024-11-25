@@ -17,7 +17,7 @@ export class BlogService {
 
     async getBlogs(options: PaginatedFindParams<Blog>): Promise<PaginateData<BlogListItem>> {
 
-        const [result, count] = await this.blogRepository.findActivePublishedBlogs(options);
+        const [result, count] = await this.blogRepository.findAllActivePublishedBlogs(options);
 
         const meta = new PaginationMeta(count, options.page, options.pageSize);
 
@@ -64,6 +64,46 @@ export class BlogService {
 
         const savedBlog = await this.blogRepository.save(blog);
         return await new BlogResponse().lazyFetch(savedBlog)
+    }
+
+    async draftBlog(newBlog: CreateBlog, author: User, cover: Express.Multer.File): Promise<BlogResponse> {
+        const blog = await this.blogRepository.create({
+            author,
+            cover: cover.path,
+            title: newBlog.title,
+            content: newBlog.content,
+            description: newBlog.description,
+        });
+
+        blog.isActive = true
+        blog.isPublished = false
+
+        const savedBlog = await this.blogRepository.save(blog);
+        return await new BlogResponse().lazyFetch(savedBlog)
+    }
+
+    async publishBlog(id: string, user: User): Promise<BlogResponse> {
+        const blog = await this.blogRepository.findBlogById(id)
+        
+        if (blog.author.id !== user.id && !user.isAdmin) {
+            throw new ForbiddenException("Unable to perform action on other's blog");
+        }
+
+        blog.isPublished = true
+
+        return new BlogResponse().lazyFetch(await this.blogRepository.save(blog))
+    }
+
+    async unpublishBlog(id: string, user: User): Promise<BlogResponse> {
+        const blog = await this.blogRepository.findBlogById(id)
+        
+        if (blog.author.id !== user.id && !user.isAdmin) {
+            throw new ForbiddenException("Unable to perform action on other's blog");
+        }
+
+        blog.isPublished = false
+
+        return new BlogResponse().lazyFetch(await this.blogRepository.save(blog))
     }
 
     async getBlogById(id: string): Promise<BlogResponse> {

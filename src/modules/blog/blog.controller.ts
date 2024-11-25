@@ -70,6 +70,19 @@ export class BlogController {
         return this.blogService.createBlog(body, user, cover);
     }
 
+    @Post('draft')
+    @UseGuards(AuthGuard)
+    @ApiBearerAuth('AccessToken')
+    @ApiConsumes('multipart/form-data')
+    @UseInterceptors(FileInterceptor('cover', { storage: new StorageGenerator('blog_banners').getStorage() }))
+    async draftBlog(
+        @Body() body: CreateBlog,
+        @AuthUser() user: User,
+        @UploadedFile() cover: Express.Multer.File
+    ): Promise<BlogResponse> {
+        return this.blogService.draftBlog(body, user, cover);
+    }
+
     @Get(':id')
     @ApiParam({ name: 'id', required: true, type: String, description: 'Blog id to fetch' })
     async getBlogPost(@Param("id") id: string): Promise<BlogResponse> {
@@ -113,5 +126,21 @@ export class BlogController {
     ) {
         const findParams = new PaginatedFindParams(parseInt(page, 10), parseInt(pageSize, 10), [], sorts)
         return this.blogService.getBlogLikes(id, findParams);
+    }
+
+    @Get(':id/publish')
+    @ApiParam({ name: 'id', required: true, type: String, description: 'Blog id to publish' })
+    @UseGuards(AuthGuard)
+    @ApiBearerAuth('AccessToken')
+    async publishBlog(@Param("id") id: string, @AuthUser() user: User) {
+        return this.blogService.publishBlog(id, user)
+    }
+
+    @Get(':id/close')
+    @ApiParam({ name: 'id', required: true, type: String, description: 'Blog id to unpublish' })
+    @UseGuards(AuthGuard)
+    @ApiBearerAuth('AccessToken')
+    async unpublishBlog(@Param("id") id: string, @AuthUser() user: User) {
+        return this.blogService.unpublishBlog(id, user)
     }
 }
