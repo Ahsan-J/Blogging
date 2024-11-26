@@ -7,7 +7,7 @@ import { UserResponse } from './dto/user-response.dto';
 import { UpdateUser } from './dto/update-user.dto';
 
 @Injectable()
-export class UsersService {
+export class UserService {
   constructor(
     private userRepository: UserRepository
   ) { }
@@ -53,11 +53,6 @@ export class UsersService {
     return new UserResponse(user)
   }
 
-  async getUserByEmail(email: User['email']): Promise<UserResponse> {
-    const user = await this.userRepository.findUserByEmail(email);
-    return new UserResponse(user);
-  }
-
   async getUsers(options: PaginatedFindParams<User>): Promise<PaginateData<UserResponse>> {
     
     const [result, count] = await this.userRepository.findAndCount(options.toFindOption());
@@ -88,6 +83,26 @@ export class UsersService {
 
     await this.userRepository.save(user);
     
+    return new UserResponse(user);
+  }
+
+  async blockUserById(id: User['id']): Promise<UserResponse> {
+    const user = await this.userRepository.findUserById(id);
+
+    user.isBlocked = true;
+
+    await this.userRepository.save(user);
+
+    return new UserResponse(user);
+  }
+
+  async unblockUserById(id: User['id']): Promise<UserResponse> {
+    const user = await this.userRepository.findUserById(id);
+
+    user.isBlocked = false;
+
+    await this.userRepository.save(user);
+
     return new UserResponse(user);
   }
 

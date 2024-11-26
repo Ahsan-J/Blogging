@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { UserController } from '@/modules/user/user.controller';
-import { UsersService } from '@/modules/user/user.service';
+import { UserService } from '@/modules/user/user.service';
 import { User } from '@/modules/user/user.entity';
 import { UserResponse } from '@/modules/user/dto/user-response.dto';
 import { CreateUserRequest } from '@/modules/user/dto/create-user.dto';
@@ -27,7 +27,7 @@ describe('UserController (e2e)', () => {
       controllers: [UserController],
       providers: [
         {
-          provide: UsersService,
+          provide: UserService,
           useValue: mockUserService,
         },
       ],

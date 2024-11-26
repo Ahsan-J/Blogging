@@ -10,22 +10,22 @@ export class Comment extends BaseModel {
 
     private readonly bitwiseOperator = new BitwiseOperator<CommentStatus>();
 
-    @OneToOne(() => User)
+    @OneToOne('User')
     commenter: User;
 
     @Column()
     comment: string;
 
-    @ManyToOne(() => Comment, comment => comment.replies)
+    @ManyToOne('Comment', 'replies')
     parent: Comment;
 
-    @OneToMany(() => Comment, comment => comment.parent)
+    @OneToMany('Comment', 'parent')
     replies: Array<Comment>;
 
-    @ManyToOne(() => User)
+    @ManyToOne('User')
     likes: User[];
 
-    @ManyToOne(() => Blog, (blog) => blog.comments, { nullable: true })
+    @ManyToOne('Blog', 'comments', { nullable: true })
     blog: Blog;
 
     get isActive(): boolean {

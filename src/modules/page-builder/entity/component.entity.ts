@@ -10,7 +10,7 @@ const bitwiseOperator = new BitwiseOperator<ComponentStatus>();
 
 @Entity()
 export class Component extends BaseModel {
-    @ManyToOne(() => Cell, cell => cell.components)
+    @ManyToOne("Cell", "components")
     @JoinColumn({ name: 'parent_cell_id' })
     parent: Cell;
 

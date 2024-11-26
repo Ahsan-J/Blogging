@@ -1,6 +1,6 @@
 import { ForbiddenException, Injectable } from "@nestjs/common";
 import { Blog } from "./entities/blog.entity";
-import { CreateBlog } from './dto/create-blog.dto';
+import { CreateBlogRequest } from './dto/create-blog-request.dto';
 import { User } from "@/modules/user/user.entity";
 import { PaginateData, PaginatedFindParams, PaginationMeta } from "@/common/dto/pagination.dto";
 import { BlogResponse } from "./dto/blog-response.dto";
@@ -50,7 +50,7 @@ export class BlogService {
         return new PaginateData(blogResponseList, meta)
     }
 
-    async createBlog(newBlog: CreateBlog, author: User, cover: Express.Multer.File): Promise<BlogResponse> {
+    async createBlog(newBlog: CreateBlogRequest, author: User, cover: Express.Multer.File): Promise<BlogResponse> {
         const blog = await this.blogRepository.create({
             author,
             cover: cover.path,
@@ -62,11 +62,11 @@ export class BlogService {
         blog.isActive = true
         blog.isPublished = true
 
-        const savedBlog = await this.blogRepository.save(blog);
-        return await new BlogResponse().lazyFetch(savedBlog)
+        await this.blogRepository.save(blog);
+        return await new BlogResponse().lazyFetch(blog)
     }
 
-    async draftBlog(newBlog: CreateBlog, author: User, cover: Express.Multer.File): Promise<BlogResponse> {
+    async draftBlog(newBlog: CreateBlogRequest, author: User, cover: Express.Multer.File): Promise<BlogResponse> {
         const blog = await this.blogRepository.create({
             author,
             cover: cover.path,

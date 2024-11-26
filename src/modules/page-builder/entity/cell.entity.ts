@@ -12,18 +12,18 @@ const bitwiseOperator = new BitwiseOperator<CellStatus>();
 @Entity({ name: 'cell' })
 export class Cell extends BaseModel {
 
-    @ManyToOne(() => Row, row => row.cells)
+    @ManyToOne('Row', 'cells')
     @JoinColumn({name: 'parent_row_id'})
     parentRow: Row
 
-    @OneToMany(()=> Row, row => row.parentCell, { lazy: true })
+    @OneToMany('Row', 'parentCell', { lazy: true })
     @JoinTable()
     rows: Array<Row>;
 
     @Column({ type: "text", default: null, transformer: new JsonTransformer() })
     attributes?: ObjectType;
 
-    @OneToMany(() => Component, component => component.parent, { lazy: true })
+    @OneToMany('Component', 'parent', { lazy: true })
     @JoinTable()
     components: Array<Component>;
 

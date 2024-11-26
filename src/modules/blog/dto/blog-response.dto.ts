@@ -15,7 +15,9 @@ export class BlogResponse {
         this.createdAt = blog.createdAt;
         this.likes = await this.getLikes(blog.likes);
         this.comments = await this.getComments(blog.comments);
-
+        this.cover = blog.cover || null;
+        this.isActive = blog.isActive;
+        this.isPublished = blog.isPublished;
         return this;
     }
 
@@ -30,6 +32,8 @@ export class BlogResponse {
         this.likes = blog.likes.map(l => new UserResponse(l));
         this.comments = blog.comments.map(c => new BlogCommentItem(c));
         this.cover = blog.cover || null;
+        this.isActive = blog.isActive;
+        this.isPublished = blog.isPublished;
         return this;
     }
 
@@ -42,6 +46,8 @@ export class BlogResponse {
     comments: Array<BlogCommentItem>;
     cover: string | null;
     author: UserResponse;
+    isActive: boolean;
+    isPublished: boolean;
 
     private async getLikes(likes: Array<User>): Promise<Array<UserResponse>> {
         const _likes: Array<UserResponse> = [];

@@ -7,7 +7,7 @@ import { StorageGenerator } from "@/common/utils/storage.utility";
 import { AuthUser } from "@/common/decorator/auth.decorator";
 import { AuthGuard } from "@/common/guards/auth.guard";
 import { User } from "@/modules/user/user.entity";
-import { CreateBlog } from "./dto/create-blog.dto";
+import { CreateBlogRequest } from "./dto/create-blog-request.dto";
 import { Blog } from "./entities/blog.entity";
 import { BlogService } from "./blog.service";
 import { SieveSort } from "@/common/pipes/sieve-sort.pipe";
@@ -63,7 +63,7 @@ export class BlogController {
     @ApiConsumes('multipart/form-data')
     @UseInterceptors(FileInterceptor('cover', { storage: new StorageGenerator('blog_banners').getStorage() }))
     async createBlog(
-        @Body() body: CreateBlog,
+        @Body() body: CreateBlogRequest,
         @AuthUser() user: User,
         @UploadedFile() cover: Express.Multer.File
     ): Promise<BlogResponse> {
@@ -76,7 +76,7 @@ export class BlogController {
     @ApiConsumes('multipart/form-data')
     @UseInterceptors(FileInterceptor('cover', { storage: new StorageGenerator('blog_banners').getStorage() }))
     async draftBlog(
-        @Body() body: CreateBlog,
+        @Body() body: CreateBlogRequest,
         @AuthUser() user: User,
         @UploadedFile() cover: Express.Multer.File
     ): Promise<BlogResponse> {

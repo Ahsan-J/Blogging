@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserController } from '@/modules/user/user.controller';
-import { UsersService } from '@/modules/user/user.service';
+import { UserService } from '@/modules/user/user.service';
 import { User } from '@/modules/user/user.entity';
 import { UserRole } from '@/modules/user/user.enum';
 import { CreateUserRequest } from '@/modules/user/dto/create-user.dto';
@@ -13,7 +13,7 @@ import { AuthGuard } from '@/common/guards/auth.guard';
 
 describe('UserController', () => {
   let controller: UserController;
-  let service: UsersService;
+  let service: UserService;
 
   const mockUser = new User();
   const mockUserResponse = new UserResponse(mockUser);
@@ -22,13 +22,15 @@ describe('UserController', () => {
     canActivate: jest.fn().mockResolvedValue(true),
   };
 
-  const mockUsersService = {
+  const mockUserService: Partial<UserService> = {
     getUsers: jest.fn(),
     getUserById: jest.fn(),
     createUser: jest.fn(),
     updateUser: jest.fn(),
     deleteUser: jest.fn(),
     restoreUser: jest.fn(),
+    blockUserById: jest.fn(),
+    unblockUserById: jest.fn()
   };
 
   beforeEach(async () => {
@@ -36,8 +38,8 @@ describe('UserController', () => {
       controllers: [UserController],
       providers: [
         {
-          provide: UsersService,
-          useValue: mockUsersService,
+          provide: UserService,
+          useValue: mockUserService,
         }
       ],
     })
@@ -45,7 +47,7 @@ describe('UserController', () => {
     .compile();
 
     controller = module.get<UserController>(UserController);
-    service = module.get<UsersService>(UsersService);
+    service = module.get<UserService>(UserService);
   });
 
   afterEach(() => {
@@ -160,6 +162,32 @@ describe('UserController', () => {
       const result = await controller.getUser(userId);
 
       expect(service.getUserById).toHaveBeenCalledWith(userId);
+      expect(result).toEqual(mockUserResponse);
+    });
+  });
+
+  describe('blockUser', () => {
+    it('should return a blocked user back', async () => {
+      const userId = '1';
+
+      jest.spyOn(service, 'blockUserById').mockResolvedValue(mockUserResponse);
+
+      const result = await controller.blockUser(userId);
+
+      expect(service.blockUserById).toHaveBeenCalledWith(userId);
+      expect(result).toEqual(mockUserResponse);
+    });
+  });
+
+  describe('unblockUser', () => {
+    it('should return a blocked user back', async () => {
+      const userId = '1';
+
+      jest.spyOn(service, 'unblockUserById').mockResolvedValue(mockUserResponse);
+
+      const result = await controller.unblockUser(userId);
+
+      expect(service.unblockUserById).toHaveBeenCalledWith(userId);
       expect(result).toEqual(mockUserResponse);
     });
   });

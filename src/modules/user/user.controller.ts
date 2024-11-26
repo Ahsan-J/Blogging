@@ -5,7 +5,7 @@ import { AuthGuard, UseRoles } from '@/common/guards/auth.guard';
 import { SieveFilter } from '@/common/pipes/sieve-filter.pipe';
 import { User } from './user.entity';
 import { UserRole } from './user.enum';
-import { UsersService } from './user.service';
+import { UserService } from './user.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { StorageGenerator } from '@/common/utils/storage.utility';
 import { AuthUser } from '@/common/decorator/auth.decorator';
@@ -22,7 +22,7 @@ import { CreateUserRequest } from './dto/create-user.dto';
 @ApiBearerAuth('AccessToken')
 export class UserController {
   constructor(
-    private userService: UsersService,
+    private userService: UserService,
   ) { }
 
   @Get()
@@ -76,5 +76,17 @@ export class UserController {
   @Get('/:id')
   async getUser(@Param('id') id: string): Promise<UserResponse> {
     return this.userService.getUserById(id);
+  }
+
+  @Put("/block/:id")
+  @UseRoles(UserRole.ADMIN)
+  async blockUser(@Param('id') id: string): Promise<UserResponse> {
+    return this.userService.blockUserById(id);
+  }
+
+  @Put("/unblock/:id")
+  @UseRoles(UserRole.ADMIN)
+  async unblockUser(@Param('id') id: string): Promise<UserResponse> {
+    return this.userService.unblockUserById(id);
   }
 }

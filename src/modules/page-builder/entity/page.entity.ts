@@ -32,7 +32,7 @@ export class Page extends BaseModel {
     @Column({ nullable: true })
     password?: string;
 
-    @OneToMany(() => Row, row => row.page, { lazy: true })
+    @OneToMany("Row", "page", { lazy: true })
     @JoinTable()
     rows: Array<Row>
 

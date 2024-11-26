@@ -14,6 +14,7 @@ export class UserResponse {
         this.website = user.website;
         this.createdAt = user.createdAt;    
         this.isActive = user.isActive;
+        this.isBlocked = user.isBlocked;
     }
 
     id: string;
@@ -27,5 +28,6 @@ export class UserResponse {
     bio: string;
     website: string;
     createdAt: Date;
+    isBlocked: boolean;
 }
 

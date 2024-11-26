@@ -24,15 +24,15 @@ export class Blog extends BaseModel {
     @Column({ type: "text", nullable: true })
     cover?: string;
 
-    @ManyToOne(() => User, user => user.blogs, { lazy: true })
+    @ManyToOne('User','blogs', { lazy: true })
     @JoinColumn()
     author: User;
 
-    @ManyToMany(() => User, user => user.like_blogs, { lazy: true })
+    @ManyToMany('User', 'like_blogs', { lazy: true })
     @JoinTable()
     likes: User[];
 
-    @OneToMany(() => Comment, comment => comment.blog, { lazy: true })
+    @OneToMany('Comment','blog', { lazy: true })
     @JoinTable()
     comments: Comment[];
 

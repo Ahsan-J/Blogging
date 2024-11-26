@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UsersService } from '@/modules/user/user.service';
+import { UserService } from '@/modules/user/user.service';
 import { User } from '@/modules/user/user.entity';
 import { CreateUserRequest } from '@/modules/user/dto/create-user.dto';
 import { UserResponse } from '@/modules/user/dto/user-response.dto';
@@ -10,7 +10,7 @@ import { ConflictException } from '@nestjs/common';
 import { UpdateUser } from '@/modules/user/dto/update-user.dto';
 
 describe('UserService', () => {
-  let service: UsersService;
+  let service: UserService;
   let userRepository: UserRepository;
 
   let mockUser: User;
@@ -32,7 +32,7 @@ describe('UserService', () => {
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        UsersService,
+        UserService,
         {
             provide: UserRepository,
             useValue: mockUserRepository,
@@ -41,7 +41,7 @@ describe('UserService', () => {
     })
     .compile();
 
-    service = module.get<UsersService>(UsersService);
+    service = module.get<UserService>(UserService);
     userRepository = module.get<UserRepository>(UserRepository);
   });
 
@@ -136,19 +136,6 @@ describe('UserService', () => {
     });
   });
 
-  describe('getUserByEmail', () => {
-    it('should get user by email', async () => {
-      const userEmail = 'admin@example.com';
-
-      jest.spyOn(userRepository,'findUserByEmail').mockResolvedValue(mockUser);
-
-      const result = await service.getUserByEmail(userEmail);
-
-      expect(userRepository.findUserByEmail).toHaveBeenCalledWith(userEmail);
-      expect(result).toEqual(mockUserResponse);
-    });
-  });
-
   describe('updateUser', () => {
     it('should update necessary properties of a user', async () => {
       const userId = '1';
@@ -226,6 +213,38 @@ describe('UserService', () => {
       expect(userRepository.save).toHaveBeenCalled();
 
       expect(result.isActive).toBeFalsy();
+    });
+  });
+
+  describe('blockUserById', () => {
+    it('should block a user by ID', async () => {
+      const userId = '1';
+
+      jest.spyOn(userRepository, 'findUserById').mockResolvedValue(mockUser);
+      jest.spyOn(userRepository, 'save').mockResolvedValue(mockUser);
+
+      const result = await service.blockUserById(userId);
+
+      expect(userRepository.findUserById).toHaveBeenCalledWith(userId);
+      expect(userRepository.save).toHaveBeenCalled();
+
+      expect(result.isBlocked).toBeTruthy();
+    });
+  });
+
+  describe('unblockUserById', () => {
+    it('should block a user by ID', async () => {
+      const userId = '1';
+
+      jest.spyOn(userRepository, 'findUserById').mockResolvedValue(mockUser);
+      jest.spyOn(userRepository, 'save').mockResolvedValue(mockUser);
+
+      const result = await service.unblockUserById(userId);
+
+      expect(userRepository.findUserById).toHaveBeenCalledWith(userId);
+      expect(userRepository.save).toHaveBeenCalled();
+
+      expect(result.isBlocked).toBeFalsy();
     });
   });
 

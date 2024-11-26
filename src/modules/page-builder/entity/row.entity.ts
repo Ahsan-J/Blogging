@@ -18,15 +18,15 @@ export class Row extends BaseModel {
     @Column()
     layout: string;
 
-    @OneToMany(() => Cell, cell => cell.parentRow, {  lazy: true })
+    @OneToMany("Cell", "parentRow", {  lazy: true })
     @JoinTable()
     cells: Array<Cell>;
 
-    @ManyToOne(() => Cell, cell => cell.rows, { nullable: true })
+    @ManyToOne("Cell", "rows", { nullable: true })
     @JoinColumn({name: 'parent_cell_id'})
     parentCell?: Cell;
 
-    @ManyToOne(() => Page, { nullable: true, lazy: true })
+    @ManyToOne("Page", { nullable: true, lazy: true })
     @JoinColumn()
     page?: Page;
 

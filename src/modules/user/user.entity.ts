@@ -40,16 +40,16 @@ export class User extends BaseModel {
     @Column({ default: null, nullable: true})
     website: string;
 
-    @OneToMany(() => Blog, blog => blog.author, { lazy: true, cascade: ["soft-remove"] })
+    @OneToMany("Blog", "author", { lazy: true, cascade: ["soft-remove"] })
     blogs: Blog[];
 
-    @ManyToMany(() => Blog,blog => blog.likes, { lazy: true, cascade: ["soft-remove"] })
+    @ManyToMany("Blog","likes", { lazy: true, cascade: ["soft-remove"] })
     like_blogs: Blog[];
 
-    @ManyToMany(() => User, user => user.followers, { lazy: true, cascade: ["soft-remove"] })
+    @ManyToMany("User", "followers", { lazy: true, cascade: ["soft-remove"] })
     following: User[];
 
-    @ManyToMany(() => User, user => user.following, { lazy: true, cascade: ["soft-remove"] })
+    @ManyToMany("User", "following", { lazy: true, cascade: ["soft-remove"] })
     followers: User[];
 
     get isActive(): boolean {
@@ -78,13 +78,5 @@ export class User extends BaseModel {
 
     get isAdmin(): boolean {
         return userRoleBitwiseOperator.hasValue(this.role, UserRole.ADMIN)
-    }
-
-    set isAdmin(value: boolean) {
-        if(value) {
-            this.role = userRoleBitwiseOperator.setValue(this.status, UserRole.ADMIN)
-        } else {
-            this.role = userRoleBitwiseOperator.removeValue(this.status, UserRole.ADMIN)
-        }
     }
 }
