@@ -5,7 +5,6 @@ import { User } from "@/modules/user/user.entity";
 import { PaginateData, PaginatedFindParams, PaginationMeta } from "@/common/dto/pagination.dto";
 import { BlogResponse } from "./dto/blog-response.dto";
 import { BlogRepository } from "./blog.repository";
-import { InvalidInstanceofException } from "@/common/exceptions/instanceof.exception";
 import { BlogListItem } from "./dto/blog-listing-item.dto";
 
 @Injectable()
@@ -31,13 +30,8 @@ export class BlogService {
     }
 
     async getBlogsByUser(options: PaginatedFindParams<Blog>, user: User): Promise<PaginateData<BlogListItem>> {
-        // validation check to make sure only instances are allowed
-        if (!(options instanceof PaginatedFindParams)) throw new InvalidInstanceofException("PaginatedFindParams")
 
-        const findOptions = options.toFindOption();
-        findOptions.where = { ...findOptions.where, author: { id: user.id }}
-
-        const [result, count] = await this.blogRepository.findAndCount(findOptions);
+        const [result, count] = await this.blogRepository.findUserBlogs(options, user);
 
         const meta = new PaginationMeta(count, options.page, options.pageSize);
 
@@ -91,7 +85,9 @@ export class BlogService {
 
         blog.isPublished = true
 
-        return new BlogResponse().lazyFetch(await this.blogRepository.save(blog))
+        await this.blogRepository.save(blog)
+
+        return new BlogResponse().lazyFetch(blog)
     }
 
     async unpublishBlog(id: string, user: User): Promise<BlogResponse> {
@@ -107,17 +103,7 @@ export class BlogService {
     }
 
     async getBlogById(id: string): Promise<BlogResponse> {
-        const blog = await this.blogRepository.createQueryBuilder('blog')
-            .where("blog.id=:id", { id })
-            .leftJoin('blog.likes', 'user.like_blogs')
-            .loadRelationCountAndMap('blog.likes_count', 'blog.likes')
-            .leftJoin('blog.comments', 'comment.blog')
-            .loadRelationCountAndMap('blog.comments_count', 'blog.comments')
-            .leftJoinAndSelect("blog.author", "user")
-            .getOne()
-
-        if (!blog) throw new Error
-
+        const blog = await this.blogRepository.findBlogById(id)
         return await new BlogResponse().lazyFetch(blog)
     }
 

@@ -6,6 +6,7 @@ import { PaginatedFindParams } from "@/common/dto/pagination.dto";
 import { InvalidInstanceofException } from "@/common/exceptions/instanceof.exception";
 import { BlogStatus } from "./blog.enum";
 import { BitwiseOperator } from "@/common/utils/bitwise.utility";
+import { User } from "@/modules/user/user.entity";
 
 @Injectable()
 export class BlogRepository extends Repository<Blog> {
@@ -36,6 +37,16 @@ export class BlogRepository extends Repository<Blog> {
         if(orderBy) queryBuilder.orderBy(orderBy)
 
         return queryBuilder.getManyAndCount()
+    }
+
+    async findUserBlogs(options: PaginatedFindParams<Blog>, user: User) {
+        // validation check to make sure only instances are allowed
+        if (!(options instanceof PaginatedFindParams)) throw new InvalidInstanceofException("PaginatedFindParams")
+        
+        const findOptions = options.toFindOption();
+        findOptions.where = { ...findOptions.where, author: { id: user.id }}
+
+        return this.findAndCount(findOptions);
     }
 
     async findBlogLikes(blogId: Blog['id'], options: PaginatedFindParams<Blog>) {
