@@ -5,4 +5,5 @@ export const enum UserStatus {
 
 export const enum UserRole {
     ADMIN,
+    USER
 }

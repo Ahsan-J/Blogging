@@ -7,165 +7,183 @@ import { User } from '@/modules/user/user.entity';
 import { PaginatedFindParams } from '@/common/dto/pagination.dto';
 import { InvalidInstanceofException } from '@/common/exceptions/instanceof.exception';
 import { BadRequestException } from '@nestjs/common';
+import { nanoid } from 'nanoid';
 
 describe('BlogRepository', () => {
-  let blogRepository: BlogRepository;
-  let mockRepository: Partial<Repository<Blog>>;
+    let blogRepository: BlogRepository;
 
-  beforeEach(async () => {
+    let mockUser: User;
+    let mockBlog: Blog;
 
-    mockRepository = {
-      createQueryBuilder: jest.fn(),
-      findOne: jest.fn(),
-      findAndCount: jest.fn()
+    const mockRepository: Partial<Repository<Blog>> = {
+        createQueryBuilder: jest.fn(),
+        findOne: jest.fn(),
+        findAndCount: jest.fn()
     };
 
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        BlogRepository,
-        {
-          provide: getRepositoryToken(Blog),
-          useValue: mockRepository
-        }
-      ]
-    }).compile();
+    beforeEach(async () => {
+        mockUser = new User();
+        mockBlog = new Blog();
 
-    blogRepository = module.get<BlogRepository>(BlogRepository);
-  });
+        mockUser.id = nanoid();
 
-  describe('findAllActivePublishedBlogs', () => {
-    it('should throw InvalidInstanceofException if options is not PaginatedFindParams', async () => {
-      await expect(
-        blogRepository.findAllActivePublishedBlogs({} as PaginatedFindParams<Blog>)
-      ).rejects.toThrow(InvalidInstanceofException);
+        mockBlog.author = mockUser;
+        mockBlog.likes = [mockUser];
+        mockBlog.comments = [];
+        mockBlog.isActive = true;
+        mockBlog.isBlocked = false;
+        mockBlog.isPublished = true;
+
+        const module: TestingModule = await Test.createTestingModule({
+            providers: [
+                BlogRepository,
+                {
+                    provide: getRepositoryToken(Blog),
+                    useValue: mockRepository
+                }
+            ]
+        }).compile();
+
+        blogRepository = module.get<BlogRepository>(BlogRepository);
     });
 
-    it('should return active and published blogs with pagination', async () => {
-      // Prepare mock data
-      const mockOptions = new PaginatedFindParams<Blog>(1, 10, [{"id" : "1"}]);
-    
-      const mockBlogs = [{ id: '1' }, { id: '2' }] as Blog[];
-      const mockCount = 2;
-
-      // Mock query builder
-      const mockQueryBuilder = {
-        where: jest.fn().mockReturnThis(),
-        andWhere: jest.fn().mockReturnThis(),
-        orderBy: jest.fn().mockReturnThis(),
-        getManyAndCount: jest.fn().mockResolvedValue([mockBlogs, mockCount])
-      } as never;
-
-      // Spy on createQueryBuilder
-      jest.spyOn(blogRepository, 'createQueryBuilder').mockReturnValue(mockQueryBuilder);
-
-      // Execute method
-      const [blogs, count] = await blogRepository.findAllActivePublishedBlogs(mockOptions);
-
-      expect(blogs).toEqual(mockBlogs);
-      expect(count).toBe(mockCount);
-    });
-  });
-
-  describe('findUserBlogs', () => {
-    it('should throw InvalidInstanceofException if options is not PaginatedFindParams', async () => {
-      const mockUser = { id: 'user-1' } as User;
-      await expect(
-        blogRepository.findUserBlogs({} as PaginatedFindParams<Blog>, mockUser)
-      ).rejects.toThrow(InvalidInstanceofException);
+    afterEach(() => {
+        jest.clearAllMocks();
     });
 
-    it('should return user blogs with pagination', async () => {
-      // Prepare mock data
-      const mockOptions = new PaginatedFindParams<Blog>();
-      const mockUser = { id: 'user-1' } as User;
-      const mockBlogs = [{ id: '1' }, { id: '2' }] as Blog[];
-      const mockCount = 2;
+    describe('findAllActivePublishedBlogs', () => {
+        it('should throw InvalidInstanceofException if options is not PaginatedFindParams', async () => {
+            await expect(
+                blogRepository.findAllActivePublishedBlogs({} as PaginatedFindParams<Blog>)
+            ).rejects.toThrow(InvalidInstanceofException);
+        });
 
-      // Mock toFindOption
-      const mockFindOptions = {
-        where: {}
-      };
-      jest.spyOn(mockOptions, 'toFindOption').mockReturnValue(mockFindOptions);
+        it('should return active and published blogs with pagination', async () => {
+            // Prepare mock data
+            const mockOptions = new PaginatedFindParams<Blog>(1, 10, [{ "id": "1" }]);
 
-      // Mock findAndCount
-      jest.spyOn(blogRepository, 'findAndCount').mockResolvedValue([mockBlogs, mockCount]);
+            const mockBlogs = [mockBlog, mockBlog];
+            const mockCount = mockBlogs.length;
 
-      // Execute method
-      const [blogs, count] = await blogRepository.findUserBlogs(mockOptions, mockUser);
+            // Mock query builder
+            const mockQueryBuilder = {
+                where: jest.fn().mockReturnThis(),
+                andWhere: jest.fn().mockReturnThis(),
+                orderBy: jest.fn().mockReturnThis(),
+                getManyAndCount: jest.fn().mockResolvedValue([mockBlogs, mockCount])
+            } as never;
 
-      // Assertions
-      expect(mockOptions.toFindOption).toHaveBeenCalled();
-      expect(mockFindOptions.where).toEqual(expect.objectContaining({
-        author: { id: mockUser.id }
-      }));
-      expect(blogs).toEqual(mockBlogs);
-      expect(count).toBe(mockCount);
-    });
-  });
+            // Spy on createQueryBuilder
+            jest.spyOn(blogRepository, 'createQueryBuilder').mockReturnValue(mockQueryBuilder);
 
-  describe('findBlogLikes', () => {
-    it('should throw InvalidInstanceofException if options is not PaginatedFindParams', async () => {
-      await expect(
-        blogRepository.findBlogLikes('blog-1', {} as PaginatedFindParams<Blog>)
-      ).rejects.toThrow(InvalidInstanceofException);
+            // Execute method
+            const [blogs, count] = await blogRepository.findAllActivePublishedBlogs(mockOptions);
+
+            expect(blogs).toEqual(mockBlogs);
+            expect(count).toBe(mockCount);
+        });
     });
 
-    it('should return blog likes', async () => {
-      // Prepare mock data
-      const mockBlogId = 'blog-1';
-      const mockOptions = new PaginatedFindParams<Blog>();
-      const mockBlog = new Blog()
-      const mockBlogs = [mockBlog]
-      const mockCount = 1;
+    describe('findUserBlogs', () => {
+        it('should throw InvalidInstanceofException if options is not PaginatedFindParams', async () => {
+            await expect(
+                blogRepository.findUserBlogs({} as PaginatedFindParams<Blog>, mockUser)
+            ).rejects.toThrow(InvalidInstanceofException);
+        });
 
-      // Mock query builder
-      const mockQueryBuilder = {
-        leftJoinAndSelect: jest.fn().mockReturnThis(),
-        where: jest.fn().mockReturnThis(),
-        getManyAndCount: jest.fn().mockResolvedValue([mockBlogs, mockCount])
-      } as never;
+        it('should return user blogs with pagination', async () => {
+            // Prepare mock data
+            const mockOptions = new PaginatedFindParams<Blog>();
 
-      // Spy on createQueryBuilder
-      jest.spyOn(blogRepository, 'createQueryBuilder').mockReturnValue(mockQueryBuilder);
+            const mockBlogs = [mockBlog, mockBlog];
+            const mockCount = mockBlogs.length;
 
-      // Execute method
-      const [blogs, count] = await blogRepository.findBlogLikes(mockBlogId, mockOptions);
+            // Mock toFindOption
+            const mockFindOptions = {
+                where: {}
+            };
+            jest.spyOn(mockOptions, 'toFindOption').mockReturnValue(mockFindOptions);
 
-      // Assertions
-      expect(blogs).toEqual(mockBlogs);
-      expect(count).toBe(mockCount);
-    });
-  });
+            // Mock findAndCount
+            jest.spyOn(blogRepository, 'findAndCount').mockResolvedValue([mockBlogs, mockCount]);
 
-  describe('findBlogById', () => {
-    it('should throw BadRequestException if id is not provided', async () => {
-      await expect(
-        blogRepository.findBlogById('')
-      ).rejects.toThrow(BadRequestException);
-    });
+            // Execute method
+            const [blogs, count] = await blogRepository.findUserBlogs(mockOptions, mockUser);
 
-    it('should throw BadRequestException if blog is not found', async () => {
-      // Mock findOne to return null
-      jest.spyOn(blogRepository, 'findOne').mockResolvedValue(null);
-
-      await expect(
-        blogRepository.findBlogById('non-existent-id')
-      ).rejects.toThrow(BadRequestException);
+            // Assertions
+            expect(mockOptions.toFindOption).toHaveBeenCalled();
+            expect(mockFindOptions.where).toEqual(expect.objectContaining({
+                author: { id: mockUser.id }
+            }));
+            expect(blogs).toEqual(mockBlogs);
+            expect(count).toBe(mockCount);
+        });
     });
 
-    it('should return blog when found', async () => {
-      // Prepare mock blog
-      const mockBlog = { id: 'blog-1', title: 'Test Blog' } as Blog;
+    describe('findBlogLikes', () => {
+        it('should throw InvalidInstanceofException if options is not PaginatedFindParams', async () => {
+            await expect(
+                blogRepository.findBlogLikes('blog-1', {} as PaginatedFindParams<Blog>)
+            ).rejects.toThrow(InvalidInstanceofException);
+        });
 
-      // Mock findOne
-      jest.spyOn(blogRepository, 'findOne').mockResolvedValue(mockBlog);
+        it('should return blog likes', async () => {
+            // Prepare mock data
+            const mockBlogId = 'blog-1';
+            const mockOptions = new PaginatedFindParams<Blog>();
+            const mockBlogs = [mockBlog]
+            const mockCount = mockBlogs.length;
 
-      // Execute method
-      const blog = await blogRepository.findBlogById('blog-1');
+            // Mock query builder
+            const mockQueryBuilder = {
+                leftJoinAndSelect: jest.fn().mockReturnThis(),
+                where: jest.fn().mockReturnThis(),
+                getManyAndCount: jest.fn().mockResolvedValue([mockBlogs, mockCount])
+            } as never;
 
-      // Assertions
-      expect(blog).toEqual(mockBlog);
-      expect(blogRepository.findOne).toHaveBeenCalledWith({ where: { id: 'blog-1' } });
+            // Spy on createQueryBuilder
+            jest.spyOn(blogRepository, 'createQueryBuilder').mockReturnValue(mockQueryBuilder);
+
+            // Execute method
+            const [blogs, count] = await blogRepository.findBlogLikes(mockBlogId, mockOptions);
+
+            // Assertions
+            expect(blogs).toEqual(mockBlogs);
+            expect(count).toBe(mockCount);
+        });
     });
-  });
+
+    describe('findBlogById', () => {
+        it('should throw BadRequestException if id is not provided', async () => {
+            await expect(
+                blogRepository.findBlogById('')
+            ).rejects.toThrow(BadRequestException);
+        });
+
+        it('should throw BadRequestException if blog is not found', async () => {
+            // Mock findOne to return null
+            jest.spyOn(blogRepository, 'findOne').mockResolvedValue(null);
+
+            await expect(
+                blogRepository.findBlogById('non-existent-id')
+            ).rejects.toThrow(BadRequestException);
+        });
+
+        it('should return blog when found', async () => {
+            // Mock findOne
+            mockBlog.id = "blog-1";
+            mockBlog.isBlocked = true;
+            
+            jest.spyOn(blogRepository, 'findOne').mockResolvedValue(mockBlog);
+
+            // Execute method
+            const blog = await blogRepository.findBlogById('blog-1');
+
+            // Assertions
+            expect(blog).toEqual(mockBlog);
+            expect(blog.isActive).toBe(mockBlog.isActive)
+            expect(blog.isBlocked).toBe(mockBlog.isBlocked)
+            expect(blogRepository.findOne).toHaveBeenCalledWith({ where: { id: 'blog-1' } });
+        });
+    });
 });

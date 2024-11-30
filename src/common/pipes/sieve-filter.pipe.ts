@@ -1,6 +1,6 @@
 import { PipeTransform, Injectable } from '@nestjs/common';
 import { Equal, FindOperator, ILike, IsNull, LessThan, LessThanOrEqual, Like, MoreThan, MoreThanOrEqual, Not, Raw } from 'typeorm';
-import { ObjectType } from '../types/collection.type';
+import { ObjectType } from '@/common/types/collection.type';
 
 @Injectable()
 export class SieveFilter implements PipeTransform<string, Array<ObjectType<FindOperator<unknown> | string>>> {
@@ -30,7 +30,7 @@ export class SieveFilter implements PipeTransform<string, Array<ObjectType<FindO
         "!=": () => Not(IsNull())
     }
 
-    private reg = new RegExp(`([\\w\\d|]+)(${Object.keys(this.filterOp).join("|")})([\\w\\d|]*)`);
+    private reg = new RegExp(`([\\w\\d|-]+(?<![_-]))(${Object.keys(this.filterOp).join("|")})([\\w\\d|-]*(?<![_-]))`);
 
     private processFilterValue = (op: string, value: string):  string | FindOperator<string> => {
         if(value && value.toLowerCase() != "null") { // perform sieve operation
@@ -46,7 +46,6 @@ export class SieveFilter implements PipeTransform<string, Array<ObjectType<FindO
         if(!filters) return [];
 
         return filters.split(',')
-        .filter(v => this.reg.test(v))
         .reduce<Array<ObjectType<FindOperator<string> | string>>>((result, expression) => {
             const matches = this.reg.exec(expression)
             

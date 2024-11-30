@@ -29,8 +29,8 @@ export class BlogResponse {
         this.content = blog.content;
         this.author = new UserResponse(blog.author);
         this.createdAt = blog.createdAt;
-        this.likes = blog.likes.map(l => new UserResponse(l));
-        this.comments = blog.comments.map(c => new BlogCommentItem(c));
+        this.likes = blog.likes?.map(l => new UserResponse(l)) || [];
+        this.comments = blog.comments?.map(c => new BlogCommentItem(c)) || [];
         this.cover = blog.cover || null;
         this.isActive = blog.isActive;
         this.isPublished = blog.isPublished;

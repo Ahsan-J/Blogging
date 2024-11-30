@@ -10,8 +10,8 @@ export class BlogListItem {
         this.content = blog.content;
         this.author = new UserResponse(await blog.author);
         this.createdAt = blog.createdAt;
-        this.likes = (await blog.likes || []).length;
-        this.comments = (await blog.comments || []).length;
+        this.likes = (await blog.likes).length;
+        this.comments = (await blog.comments).length;
         this.cover = blog.cover || null;
 
         return this;

@@ -1,4 +1,4 @@
-import { Injectable, CanActivate, ExecutionContext, SetMetadata } from '@nestjs/common';
+import { Injectable, CanActivate, ExecutionContext, SetMetadata, UnauthorizedException, ForbiddenException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Request } from 'express';
 import { TokenService } from '@/shared/token/token.service';
@@ -21,7 +21,7 @@ export class AuthGuard implements CanActivate {
     async canActivate(context: ExecutionContext): Promise<boolean> {
 
         const requiredRoles = this.reflector.getAllAndOverride<UserRole[]>('roles', [context.getHandler(), context.getClass()]) || [];
-        const request = context.switchToHttp().getRequest();
+        const request: Request = context.switchToHttp().getRequest();
 
         const headerData: Request['headers'] = {
             ...request.headers,
@@ -29,15 +29,26 @@ export class AuthGuard implements CanActivate {
             'authorization': (request.headers['authorization'] || request.query['token']) as string,
         }
 
-        if (headerData.authorization) {
-            const [userId, userRole] = this.tokenService.getTokenData(headerData.authorization);
-            if (requiredRoles.length && !requiredRoles.some(role => this.bitwiseOperator.hasValue(parseInt(userRole, 10), role))) return false;
+        if (!headerData.authorization) throw new UnauthorizedException("Authorization token is missing");
+        
+        const [userId, userRole] = this.tokenService.getTokenData(headerData.authorization);
 
-            request.user = await this.userRepository.findUserById(userId)
-
-            return true;
+        // Check if user role matches any of the required roles using bitwise operator
+        if (requiredRoles.length && !requiredRoles.some(role => this.bitwiseOperator.hasValue(parseInt(userRole, 10), role))) {
+            throw new ForbiddenException("User does not have the required roles");
         }
+        
+        request.user = await this.getUser(userId);
 
-        return false
+        return true;
+
+    }
+
+    private async getUser(userId: string) {
+        try {
+            return await this.userRepository.findUserById(userId)
+        } catch (err) {
+            throw new UnauthorizedException(err);
+        }
     }
 }
