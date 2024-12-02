@@ -30,7 +30,7 @@ export class SieveFilter implements PipeTransform<string, Array<ObjectType<FindO
         "!=": () => Not(IsNull())
     }
 
-    private reg = new RegExp(`([\\w\\d|-]+(?<![_-]))(${Object.keys(this.filterOp).join("|")})([\\w\\d|-]*(?<![_-]))`);
+    private reg = new RegExp(`([\\w\\d|-]+(?<![_-]))(${Object.keys(this.filterOp).join("|").replaceAll("*", "\\*")})([\\w\\d|-]*(?<![_-]))`);
 
     private processFilterValue = (op: string, value: string):  string | FindOperator<string> => {
         if(value && value.toLowerCase() != "null") { // perform sieve operation

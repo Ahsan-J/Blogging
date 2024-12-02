@@ -1,13 +1,13 @@
 import { nanoid } from "nanoid";
-import { BeforeInsert, BeforeUpdate, Column, PrimaryGeneratedColumn } from "typeorm";
+import { BeforeInsert, BeforeSoftRemove, BeforeUpdate, Column, PrimaryGeneratedColumn, BeforeRecover } from "typeorm";
 
-export abstract class BaseModel {
+export class BaseModel {
 
     @PrimaryGeneratedColumn('uuid')
-    public id: string;
+    public id: string = nanoid();
 
-    @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', name: 'created_at' })
-    public createdAt: Date;
+    @Column({ type: 'timestamp', default: 'CURRENT_TIMESTAMP', name: 'created_at' })
+    public createdAt: Date = new Date();
 
     @Column({default: 1})
     protected status: number = 1;
@@ -19,15 +19,22 @@ export abstract class BaseModel {
     public deletedAt?: Date; 
 
     @BeforeInsert()
-    private setCreatedAt() {
+    setCreatedAt() {
         this.createdAt = new Date();
-        if (!this.id) {
-            this.id = nanoid(); // If the `id` is not set, generate a UUID
-        }
     }
 
     @BeforeUpdate()
-    private setUpdatedAt() {
+    setUpdatedAt() {
         this.updatedAt = new Date();
+    }
+
+    @BeforeSoftRemove()
+    setDeletedAt() {
+        this.deletedAt = new Date();
+    }
+
+    @BeforeRecover()
+    setRecovery() {
+        this.deletedAt = undefined;
     }
 }

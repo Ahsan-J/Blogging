@@ -32,16 +32,16 @@ describe('SieveFilter Pipe', () => {
             expect(result[0].name).toBeInstanceOf(EqualOperator)
         });
 
-        it('should parse a filter with a "like" operator', () => {
-            const result = pipe.transform('name=@=John');
+        it('should parse a filter with a like operator', () => {
+            const result = pipe.transform('name@=John');
 
             expect(result.length).toBe(1);
             expect(result[0]).toMatchObject({ "name": {} })
             expect(result[0].name).toBeInstanceOf(FindOperator)
         });
 
-        it('should parse a filter with "ilike" operator', () => {
-            const result = pipe.transform('name=@*John');
+        it('should parse a filter with ilike operator', () => {
+            const result = pipe.transform('name@=*John');
 
             expect(result.length).toBe(1);
             expect(result[0]).toMatchObject({ "name": {} })
@@ -56,6 +56,7 @@ describe('SieveFilter Pipe', () => {
             expect(result[0]).toMatchObject({ "name": {} })
             expect(result[1]).toMatchObject({ "name": {} })
             expect(result[0].name).toBeInstanceOf(EqualOperator)
+            expect(result[0].name as FindOperator<string>).toBeInstanceOf(EqualOperator)
             expect(result[1].name).toBeInstanceOf(EqualOperator)
         });
 
@@ -73,7 +74,7 @@ describe('SieveFilter Pipe', () => {
             expect(result[3].age).toBeInstanceOf(FindOperator)
         });
 
-        it('should handle "null" filter values correctly (IsNull)', () => {
+        it('should handle null filter values correctly (IsNull)', () => {
             const result = pipe.transform('name==null');
 
             expect(result.length).toBe(1);
@@ -97,7 +98,7 @@ describe('SieveFilter Pipe', () => {
             expect(result[0].name).toBeInstanceOf(FindOperator)
           });
 
-        it('should parse a filter with inequality operator (!=")', () => {
+        it('should parse a filter with inequality operator (!=)', () => {
             const result = pipe.transform('name!=John');
 
             expect(result.length).toBe(1);
@@ -105,7 +106,7 @@ describe('SieveFilter Pipe', () => {
             expect(result[0].name).toBeInstanceOf(FindOperator)
         });
 
-        it('should parse "greater than" filter (> operator)', () => {
+        it('should parse greater than filter (> operator)', () => {
             const result = pipe.transform('age>30');
 
             expect(result.length).toBe(1);
@@ -113,7 +114,7 @@ describe('SieveFilter Pipe', () => {
             expect(result[0].age).toBeInstanceOf(FindOperator)
         });
 
-        it('should parse "less than or equal" filter (<= operator)', () => {
+        it('should parse less than or equal filter (<= operator)', () => {
             const result = pipe.transform('age<=30');
 
             expect(result.length).toBe(1);
@@ -121,11 +122,12 @@ describe('SieveFilter Pipe', () => {
             expect(result[0].age).toBeInstanceOf(FindOperator)
         });
 
-        it('should correctly handle the "match" operator (@==)', () => {
+        it('should correctly handle the match operator (@==)', () => {
             const result = pipe.transform('description@==test');
 
             expect(result.length).toBe(1);
             expect(result[0]).toMatchObject({ "description": {} })
+            expect((result[0].description as FindOperator<string>).getSql?.("")).toBeDefined()
             expect(result[0].description).toBeInstanceOf(FindOperator)
         });
 
@@ -148,7 +150,7 @@ describe('SieveFilter Pipe', () => {
             expect(result).toEqual([]);
         });
 
-        it('should handle null values properly for the "!=" operator', () => {
+        it('should handle null values properly for the != operator', () => {
             const result = pipe.transform('name!=null');
 
             expect(result.length).toBe(1);
@@ -160,6 +162,81 @@ describe('SieveFilter Pipe', () => {
             const result = pipe.transform('!@=unknown');
             expect(result).toEqual([]);
         });
+
+        it('should correctly handle the case insensitive like operator (@=*)', () => {
+            const result = pipe.transform('description@=*test');
+        
+            expect(result.length).toBe(1);
+            expect(result[0]).toMatchObject({ "description": {} });
+            expect(result[0].description).toBeInstanceOf(FindOperator)
+        });
+
+        it('should correctly handle the Case-insensitive string Equals operator (==*)', () => {
+            const result = pipe.transform('description==*test');
+        
+            expect(result.length).toBe(1);
+            expect(result[0]).toMatchObject({ "description": {} });
+            // expect(result[0].description).toBeInstanceOf(FindOperator)
+        });
+
+        it('should correctly handle the Case-insensitive string Not equals operator (==*)', () => {
+            const result = pipe.transform('description!=*test');
+        
+            expect(result.length).toBe(1);
+            expect(result[0]).toMatchObject({ "description": {} });
+            // expect(result[0].description).toBeInstanceOf(FindOperator)
+        });
+
+        it('should correctly handle the Starts with operator (_=)', () => {
+            const result = pipe.transform('description_=test');
+        
+            expect(result.length).toBe(1);
+            expect(result[0]).toMatchObject({ "description": {} });
+            expect(result[0].description).toBeInstanceOf(FindOperator)
+        });
+
+        it('should correctly handle the Case-insensitive string does not Contains (!@=*)', () => {
+            const result = pipe.transform('description!@=*test');
+        
+            expect(result.length).toBe(1);
+            expect(result[0]).toMatchObject({ "description": {} });
+            expect(result[0].description).toBeInstanceOf(FindOperator)
+        });
+
+        it('should correctly handle the Case-insensitive string Contains (@=*)', () => {
+            const result = pipe.transform('description@=*test');
+        
+            expect(result.length).toBe(1);
+            expect(result[0]).toMatchObject({ "description": {} });
+            expect(result[0].description).toBeInstanceOf(FindOperator)
+        });
+
+        it('should correctly handle the Case-insensitive string does not Starts with (!_=*)', () => {
+            const result = pipe.transform('description!_=*test');
+        
+            expect(result.length).toBe(1);
+            expect(result[0]).toMatchObject({ "description": {} });
+            expect(result[0].description).toBeInstanceOf(FindOperator)
+        });
+        
+
+        it('should correctly handle the Does not Contains (!@=)', () => {
+            const result = pipe.transform('description!@=test');
+        
+            expect(result.length).toBe(1);
+            expect(result[0]).toMatchObject({ "description": {} });
+            expect(result[0].description).toBeInstanceOf(FindOperator)
+        });
+
+        it('should correctly handle the Does not Starts with (!_=)', () => {
+            const result = pipe.transform('description!_=test');
+        
+            expect(result.length).toBe(1);
+            expect(result[0]).toMatchObject({ "description": {} });
+            expect(result[0].description).toBeInstanceOf(FindOperator)
+        });
+        
+
 
         // it('should handle complex filters', () => {
         //   const result = pipe.transform('name==John|Jane|description@=test|age>=25|<30');
