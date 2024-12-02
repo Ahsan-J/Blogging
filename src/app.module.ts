@@ -8,6 +8,7 @@ import { TokenModule } from '@/shared/token/token.module';
 import { DatabaseModule } from './database/database.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { PageBuilderModule } from './modules/page-builder/page-builder.module';
+import { MailModule } from './shared/mail/mail.module';
 
 
 @Module({
@@ -20,6 +21,7 @@ import { PageBuilderModule } from './modules/page-builder/page-builder.module';
     PageBuilderModule,
     BlogModule,
     TokenModule,
+    MailModule.forRoot()
   ],
   controllers: [AppController]
 })
