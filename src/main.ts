@@ -9,6 +9,8 @@ import { join } from 'path';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import helmet from 'helmet';
 import { LoggerInterceptor } from './common/interceptors/logger.interceptor';
+import { IdempotencyInterceptor } from './common/interceptors/idempotency.interceptor';
+import { LRUCacheManager } from './common/utils/lru-cache.utility';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -25,9 +27,13 @@ async function bootstrap() {
     app.use(helmet());
   }
 
-  app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
+  const LRUCache = new LRUCacheManager(10);
+  const reflect = app.get(Reflector)
+
+  app.useGlobalInterceptors(new ClassSerializerInterceptor(reflect));
+  app.useGlobalInterceptors(new LoggerInterceptor());
+  app.useGlobalInterceptors(new IdempotencyInterceptor(LRUCache, reflect));
   app.useGlobalInterceptors(new AppResponseInterceptor());
-  app.useGlobalInterceptors(new LoggerInterceptor())
 
   app.useGlobalPipes(validationPipe);
 

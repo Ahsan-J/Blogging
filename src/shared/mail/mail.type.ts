@@ -5,3 +5,11 @@ export type NodemailerConfig = {
   user: string;
   pass: string;
 }
+
+export type SendEmailRequest<T> = {
+  from: string, 
+  to: string, 
+  subject: string, 
+  markup: string
+  data: T
+}
