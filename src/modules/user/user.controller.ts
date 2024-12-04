@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Query, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { PaginateData, PaginatedFindParams } from '@/common/dto/pagination.dto';
-import { AuthGuard, UseRoles } from '@/common/guards/auth.guard';
+import { AuthGuard } from '@/common/guards/auth.guard';
 import { SieveFilter } from '@/common/pipes/sieve-filter.pipe';
 import { User } from './user.entity';
 import { UserRole } from './user.enum';
@@ -15,6 +15,7 @@ import { SieveSort } from '@/common/pipes/sieve-sort.pipe';
 import { UserResponse } from './dto/user-response.dto';
 import { UpdateUser } from './dto/update-user.dto';
 import { CreateUserRequest } from './dto/create-user.dto';
+import { UseRoles } from '@/common/decorator/role.decorator';
 
 @ApiTags('User')
 @Controller("user")

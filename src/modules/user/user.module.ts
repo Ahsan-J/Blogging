@@ -7,17 +7,17 @@ import { UserRepository } from './user.repository';
 import { UserDataSeeder } from './user.seeder';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([User]),
-  ],
-  providers: [UserService, UserRepository, UserDataSeeder],
-  controllers: [UserController],
-  exports: [UserService, UserRepository]
+    imports: [
+        TypeOrmModule.forFeature([User]),
+    ],
+    providers: [UserService, UserRepository, UserDataSeeder],
+    controllers: [UserController],
+    exports: [UserService, UserRepository]
 })
 export class UserModule implements OnApplicationBootstrap {
-  constructor(public readonly seeder: UserDataSeeder){}
+    constructor(public readonly seeder: UserDataSeeder) { }
 
-  onApplicationBootstrap() {
-    this.seeder.seed();
-  }
+    onApplicationBootstrap() {
+        this.seeder.seed();
+    }
 }

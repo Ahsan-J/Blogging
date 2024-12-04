@@ -1,12 +1,10 @@
-import { Injectable, CanActivate, ExecutionContext, SetMetadata, UnauthorizedException, ForbiddenException } from '@nestjs/common';
+import { Injectable, CanActivate, ExecutionContext, UnauthorizedException, ForbiddenException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Request } from 'express';
 import { TokenService } from '@/shared/token/token.service';
 import { UserRole } from '@/modules/user/user.enum';
 import { BitwiseOperator } from '@/common/utils/bitwise.utility';
 import { UserRepository } from '@/modules/user/user.repository';
-
-export const UseRoles = (...roles: UserRole[]) => SetMetadata('roles', roles);
 
 @Injectable()
 export class AuthGuard implements CanActivate {

@@ -20,8 +20,8 @@ import { CellRepository } from "./repository/cell.repository";
     ],
     controllers: [PageBuilderController],
     providers: [
-        PageBuilderService, 
-        PageRepository, 
+        PageBuilderService,
+        PageRepository,
         ComponentRepository,
         RowRepository,
         CellRepository,
@@ -29,10 +29,10 @@ import { CellRepository } from "./repository/cell.repository";
     ],
     exports: [PageBuilderService]
 })
-export class PageBuilderModule implements OnApplicationBootstrap{
-    constructor(public readonly seeder: PageBuilderDataSeeder){}
+export class PageBuilderModule implements OnApplicationBootstrap {
+    constructor(public readonly seeder: PageBuilderDataSeeder) { }
 
-  onApplicationBootstrap() {
-    this.seeder.seed(PageBuilderData as never);
-  }
+    onApplicationBootstrap() {
+        this.seeder.seed(PageBuilderData as never);
+    }
 }

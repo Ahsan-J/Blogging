@@ -1,4 +1,4 @@
-import { BadRequestException, ConflictException, ForbiddenException, Injectable, NotAcceptableException } from "@nestjs/common";
+import { BadRequestException, ConflictException, ForbiddenException, Injectable, Logger, NotAcceptableException } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { User } from "@/modules/user/user.entity";
 import { TokenService } from "@/shared/token/token.service";
@@ -24,6 +24,8 @@ export class AuthService {
 
     private resetKeyword = "RESET_PASSWORD"
     private activationKeyword = "ACTIVATION_KEYWORD"
+
+    logger = new Logger(AuthService.name)
 
     async authenticateUser(email: string, password: string): Promise<LoginResponse> {
         const userInfo: User = await this.userRepository.findUserByEmail(email);
@@ -76,7 +78,7 @@ export class AuthService {
 
         const activationCode = await this.tokenService.generateToken([ this.activationKeyword, newUser.id, newUser.role ]);
 
-        this.mailService.sendActivationCode(newUser.email, activationCode)
+        this.sendActivationCode(newUser.email, activationCode)
     
         return new UserResponse(newUser);
     }
@@ -125,8 +127,16 @@ export class AuthService {
     async forgotPassword(email: string): Promise<string> {
         const resetCode = await this.generateResetPasswordToken(email)
 
-        this.mailService.sendResetCode(email, resetCode)
+        this.sendResetCode(email, resetCode)
 
         return "The code has been sent to your email address. Kindly verify the code for further processing";
+    }
+
+    private async sendActivationCode(email: string, activationCode: string) {
+        this.logger.log(email, activationCode)
+    }
+
+    private async sendResetCode(email: string, resetCode: string) {
+        this.logger.log(email, resetCode)
     }
 }

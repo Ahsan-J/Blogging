@@ -10,6 +10,6 @@ export type SendEmailRequest<T> = {
   from: string, 
   to: string, 
   subject: string, 
-  markup: string
+  template: string
   data: T
 }

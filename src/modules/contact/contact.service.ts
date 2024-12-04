@@ -4,6 +4,8 @@ import { ContactPortfolioForm } from "./contact.dto";
 import { Contacts } from "./contact.entity";
 import { ContactRepository } from "./contact.repository";
 import { MailService } from "@/shared/mail/mail.service";
+import { SendEmailRequest } from "@/shared/mail/mail.type";
+import { ObjectType } from "@/common/types/collection.type";
 
 @Injectable()
 export class ContactService {
@@ -26,8 +28,21 @@ export class ContactService {
 
         const savedContactInfo = await this.contactRepository.save(contactInfo)
 
-        this.mailService.notifyContact(contactInfo)
+        this.notifyContact(contactInfo)
         
         return savedContactInfo
+    }
+
+    private async notifyContact(contactInfo: Contacts) {
+        
+        const emailConfig: SendEmailRequest<ObjectType> = {
+            to: contactInfo.email,
+            from: "",
+            data: {},
+            subject: "",
+            template: ""
+        }
+
+        return await this.mailService.sendEmail(emailConfig)
     }
 }

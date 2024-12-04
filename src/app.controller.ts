@@ -1,14 +1,23 @@
 import { ApiTags } from '@nestjs/swagger';
-import { Controller, Get, Version, VERSION_NEUTRAL } from "@nestjs/common";
+import { Controller, Get, Render, Version, VERSION_NEUTRAL } from "@nestjs/common";
 import { Idempotent } from '@/common/decorator/idempotent.decorator';
+import { differenceInSeconds } from 'date-fns';
+
+const uptime = new Date();
 
 @ApiTags('Index')
 @Controller()
 export class AppController {
     @Get()
+    @Render('index')
     @Version(VERSION_NEUTRAL)
     async index() {
-        return "It is working"
+        const uptimeSeconds = differenceInSeconds(new Date(), uptime);
+        const hours = Math.floor(uptimeSeconds / 3600);
+        const minutes = Math.floor((uptimeSeconds % 3600) / 60);
+        const seconds = Math.floor(uptimeSeconds % 60);
+
+        return {text: `System uptime: ${hours} hours, ${minutes} minutes, ${seconds} seconds`}
     }
 
     @Get('/test-cache')
