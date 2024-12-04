@@ -3,16 +3,22 @@ NestJS application to handle Portfolio, Blog, and other feature
 ```
 src/
 ├── common/                      # Common utilities, types, and helpers
+│   ├── decorator/               # Custom Decorators
 │   ├── utils/                   # Utility/helper functions
+│   ├── dto/                     # Common DTO
+│   │   └── pagination.dto.ts    # Pagination DTO used to create a common paginated Response
 │   ├── interfaces/              # Common interfaces
+│   ├── entity/                  # Common Entity shared among entities
+│   │   └── base.entity.ts       # Base entity columns to be present in every model
+│   ├── exceptions/              # Generic HTTP Exceptions
 │   ├── guards/                  # Guards for role-based access control (RBAC)
 │   ├── interceptors/            # Interceptors (logging, response transformation)
+│   ├── transformer/             # Database value transformers
 │   ├── pipes/                   # Pipes (validation, transformation)
-│   └── filters/                 # Global exception filters
+│   └── types/                   # Global definition of types
 ├── database/                    # Database-related files (seeders, migrations, repositories)
-│   ├── migrations/              # Migrations for schema changes
-│   ├── seeders/                 # Seeders for populating data
-│   ├── repositories/            # Repositories (data access layer)
+│   ├── migrations/              # SQL-based Migrations for schema changes
+│   ├── seeders/                 # SQL-based Seeders for populating data
 │   └── database.module.ts       # Module to manage migrations, seeders, repositories
 ├── modules/                     # Feature-based modules
 │   ├── auth/                    # Authentication module
@@ -41,6 +47,9 @@ src/
 │   │   ├── dto/                 # User-related DTOs for commands and queries
 │   │   │   ├── create-user.dto.ts
 │   │   │   └── get-user.dto.ts
+│   │   ├── repository           # Group type of files together if more than one exists
+│   │   │   ├── user.repository.ts
+│   │   │   └── some-other.repository.ts
 │   │   ├── user.controller.ts
 │   │   ├── user.service.ts
 │   │   ├── user.entity.ts
@@ -52,9 +61,6 @@ src/
 │   ├── mail/                    # Mail service
 │   ├── logger/                  # Logger service
 │   └── ...                      # Other shared services
-├── config/                      # Configuration files
 ├── app.module.ts                # Main application module
-├── main.ts                      # Application bootstrap file
-├── tsconfig.json                # TypeScript configuration
-└── package.json                 # Project dependencies and scripts
+└── main.ts                      # Application bootstrap file
 ```
