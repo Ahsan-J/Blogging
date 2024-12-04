@@ -11,6 +11,7 @@ import helmet from 'helmet';
 import { LoggerInterceptor } from './common/interceptors/logger.interceptor';
 import { IdempotencyInterceptor } from './common/interceptors/idempotency.interceptor';
 import { LRUCacheManager } from './common/utils/lru-cache.utility';
+import { RunInClusterMode } from './cluster';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -67,4 +68,4 @@ const validationPipe = new ValidationPipe({
   }),
 })
 
-bootstrap();
+RunInClusterMode(bootstrap);
