@@ -29,6 +29,16 @@ export default {
       // statements: 100
     }
   },
+  collectCoverageFrom: [
+    '!**/*',
+    "src/**/*.[jt]s?(x)",
+    "!src/**/*.d.[jt]s?(x)",
+    "!src/**/*.seeder.[jt]s?(x)",
+    "!src/**/*.module.[jt]s?(x)",
+    "!src/**/*.interceptor.[jt]s?(x)",
+    "!src/**/*.constant.[jt]s?(x)",
+    "!src/*.[jt]s?(x)",
+  ],
   testMatch:[ // The glob patterns Jest uses to detect test files
     "<rootDir>src/**/*.spec.[jt]s?(x)",
     "<rootDir>test/**/*.spec.[jt]s?(x)",
