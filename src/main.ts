@@ -6,15 +6,17 @@ import { AppResponseInterceptor } from '@/common/interceptors/response.intercept
 import { ObjectType } from '@/common/types/collection.type';
 import { AppModule } from './app.module';
 import { join } from 'path';
-import { NestExpressApplication } from '@nestjs/platform-express';
+import { ExpressAdapter, NestExpressApplication } from '@nestjs/platform-express';
 import helmet from 'helmet';
 import { LoggerInterceptor } from './common/interceptors/logger.interceptor';
 import { IdempotencyInterceptor } from './common/interceptors/idempotency.interceptor';
 import { LRUCacheManager } from './common/utils/lru-cache.utility';
-import { RunInClusterMode } from './cluster';
+import express from 'express';
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  const server = express();
+
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, new ExpressAdapter(server));
 
   app.enableCors();
   app.useStaticAssets(join(process.cwd(), 'public'));
@@ -52,7 +54,12 @@ async function bootstrap() {
   
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document);
-  await app.listen(configService.get("PORT", 3000));
+
+  await app.init();
+
+  server.listen(configService.get("PORT", 3000));
+
+  return server;
 }
 
 const validationPipe = new ValidationPipe({
@@ -68,4 +75,5 @@ const validationPipe = new ValidationPipe({
   }),
 })
 
-RunInClusterMode(bootstrap);
+// RunInClusterMode(bootstrap);
+export default bootstrap();

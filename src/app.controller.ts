@@ -17,7 +17,7 @@ export class AppController {
         const minutes = Math.floor((uptimeSeconds % 3600) / 60);
         const seconds = Math.floor(uptimeSeconds % 60);
 
-        return {text: `System uptime: ${hours} hours, ${minutes} minutes, ${seconds} seconds`}
+        return {text: `[${process.pid}] System uptime: ${hours} hours, ${minutes} minutes, ${seconds} seconds`}
     }
 
     @Get('/test-cache')

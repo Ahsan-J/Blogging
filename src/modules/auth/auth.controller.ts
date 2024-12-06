@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, Query, UseInterceptors, UploadedFile, Render } from '@nestjs/common';
+import { Controller, Post, Body, Get, Query, UseInterceptors, UploadedFile, Render, VERSION_NEUTRAL, Version } from '@nestjs/common';
 import { LoginRequest, LoginResponse } from './dto/login.dto';
 import { RegisterUserRequest } from './dto/register.dto';
 import { AuthService } from './auth.service';
@@ -34,6 +34,7 @@ export class AuthController {
 
   @Get('reset-password')
   @Render('reset-password')
+  @Version(VERSION_NEUTRAL)
   async resetPasswordTemplate(
     @Query('email') email: string,
   ) {
