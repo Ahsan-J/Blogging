@@ -4,6 +4,7 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { ContactController } from "./contact.controller";
 import { Contacts } from "./contact.entity";
 import { ContactService } from "./contact.service";
+import { ContactRepository } from "./contact.repository";
 
 @Module({
     imports:[
@@ -12,6 +13,6 @@ import { ContactService } from "./contact.service";
     ],
     controllers: [ContactController],
     exports: [ContactService],
-    providers: [ContactService]
+    providers: [ContactService, ContactRepository]
 })
 export class ContactModule {}

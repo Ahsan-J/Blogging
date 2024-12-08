@@ -1,5 +1,4 @@
 import { Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
 import { ContactPortfolioForm } from "./contact.dto";
 import { Contacts } from "./contact.entity";
 import { ContactRepository } from "./contact.repository";
@@ -10,7 +9,6 @@ import { ObjectType } from "@/common/types/collection.type";
 @Injectable()
 export class ContactService {
     constructor(
-        @InjectRepository(Contacts)
         private contactRepository: ContactRepository,
         private mailService: MailService
     ) {}
