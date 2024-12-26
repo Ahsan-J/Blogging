@@ -5,23 +5,24 @@ import { AppController } from './app.controller';
 import { UserModule } from '@/modules/user/user.module';
 import { BlogModule } from '@/modules/blog/blog.module';
 import { TokenModule } from '@/shared/token/token.module';
-import { DatabaseModule } from './database/database.module';
+import { DatabaseConfiguration } from './common/config/database.config';
 import { AuthModule } from './modules/auth/auth.module';
 import { PageBuilderModule } from './modules/page-builder/page-builder.module';
 import { MailModule } from './shared/mail/mail.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    DatabaseModule,
+    MailModule.forRoot(),
+    TypeOrmModule.forRootAsync(DatabaseConfiguration),
     ContactModule,
     AuthModule,
     UserModule,
     PageBuilderModule,
     BlogModule,
     TokenModule,
-    MailModule.forRoot()
   ],
   controllers: [AppController]
 })

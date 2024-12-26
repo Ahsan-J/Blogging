@@ -12,6 +12,7 @@ import { LoggerInterceptor } from './common/interceptors/logger.interceptor';
 import { IdempotencyInterceptor } from './common/interceptors/idempotency.interceptor';
 import { LRUCacheManager } from './common/utils/lru-cache.utility';
 import express from 'express';
+import { RunInClusterMode } from './cluster';
 
 async function bootstrap() {
   const server = express();
@@ -75,5 +76,5 @@ const validationPipe = new ValidationPipe({
   }),
 })
 
-// RunInClusterMode(bootstrap);
-export default bootstrap();
+export default RunInClusterMode(bootstrap);
+// export default bootstrap();
